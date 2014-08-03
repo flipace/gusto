@@ -1,0 +1,23 @@
+*{
+	font-size: 12px;
+	font-family: Tahoma, Arial, sans-serif;
+}
+
+body{
+	margin: 0;
+	padding: 0;
+}
+
+.box{
+	width: 300px;
+	height: auto;
+	float:left;
+}
+
+.box--blue{
+	background-color: #81BEF7;
+}
+
+.box--green{
+	background-color: #BFFF00;
+}
