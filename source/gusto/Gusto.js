@@ -25,6 +25,23 @@ $(function(){
 		}
 		return $gusto;
 	});
+
+	$('body').on('mouseenter', '[data-gusto]', function(){
+		$gusto = $(this);
+		var width 	= $gusto.outerWidth();
+		var height 	= $gusto.outerHeight();
+
+		$('#gusto-hint').stop().animate({
+			width: 20,
+			height: height,
+			left: 20,
+			top: $gusto.offset().top
+		})
+
+	});
+
+	var gusto_hint = '<div id="gusto-hint" style="z-index: 10000; background-color: rgba(0,200,0,0.3); position: absolute"></div>';
+	$('body').append(gusto_hint);
 });
 
 /** 

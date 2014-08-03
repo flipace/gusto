@@ -90,7 +90,7 @@ class Gusto{
 				$insert = "INSERT INTO content(slug, data, file) 
 						   VALUES(
 						   	'".self::slugify($element->getAttribute('data-gusto'))."', 
-						   	'".$element->nodeValue."',
+						   	'".SQLite3::escapeString($element->nodeValue)."',
 						   	'".$this->_caller_file."'
 						   )";
 
@@ -112,7 +112,7 @@ class Gusto{
 
 	public function initEditor(){
 		$script = '<script type="text/javascript">var GUSTO_CALLER_FILE = "'.$this->_caller_file.'";</script>
-					<script type="text/javascript" src="'.self::GUSTO_DIR.'gusto.js"></script>';
+					<script type="text/javascript" src="'.self::GUSTO_DIR.'Gusto.js"></script>';
 		$this->_markup = str_replace('</body>', $script.'</body>', $this->_markup);
 	}
 
@@ -158,7 +158,7 @@ class Gusto{
 
 		if($result = $this->_db->query($checkQuery)->fetchArray()){
 			$saveQuery = "UPDATE content 
-							SET data = '".$content."'
+							SET data = '".SQLite3::escapeString($content)."'
 							WHERE 
 								slug = '".self::slugify($id)."' AND
 								file = '".$caller_file."'
@@ -170,7 +170,7 @@ class Gusto{
 								file
 							)VALUES(
 								'".self::slugify($id)."', 
-								'".$content."',
+								'".SQLite3::escapeString($content)."',
 								'".$caller_file."'
 							)";
 		}

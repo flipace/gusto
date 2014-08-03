@@ -7,6 +7,10 @@ What is Gusto for?
 ------
 Gustos provides an easy way to change the content of websites, without the need to use traditional content management systems.
 
+**Demo:** http://gusto.neschkudla.at
+
+**Edit Demo:** http://bit.ly/gusto-edit-demo
+
 Use it for
 ------
 
