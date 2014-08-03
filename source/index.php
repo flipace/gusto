@@ -19,6 +19,7 @@ This is box 1.
 	<div class="box box--green" data-gusto="Text for box 2">
 This is box 2.
 	</div>
+	<img src="http://i.imgur.com/YIxOZSv.jpg" data-gusto="an-image" />
 </body>
 </html>
 <?php 

@@ -1,7 +1,7 @@
 Gusto
 =====
 
-A completely new way to make your websites content editable.
+Micro Content Management for small websites.
 
 What is Gusto for?
 ------

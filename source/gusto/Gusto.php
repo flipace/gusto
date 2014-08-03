@@ -29,7 +29,7 @@ class Gusto{
 		$this->_markup = $this->getMarkup();
 
 		if($this->checkMode('save')){
-			echo $this->saveElement($_POST['id'], $_POST['content'], $_POST['caller_file']);
+			echo $this->saveElement($_POST['id'], $_POST['content'], $_POST['caller_file'], $_POST['tag']);
 			exit;
 		}
 
@@ -78,14 +78,17 @@ class Gusto{
 			);
 
 			if($result = $db_entry->fetchArray()){
-				$subElement = $doc->createDocumentFragment();
-				if($result['data'] != ''){
-					$subElement->appendXML($result['data']);
+				if($result['data'] !== ''){
+					if($element->nodeName !== 'img'){
+						$subElement = $doc->createDocumentFragment();
+						$subElement->appendXML($result['data']);
 
-					$element->nodeValue = " ";
-					$element->appendChild($subElement);
+						$element->nodeValue = " ";
+						$element->appendChild($subElement);
+					}else{
+						$element->setAttribute('src', $result['data']);
+					}
 				}
-				//$element->nodeValue = $result['data'];
 			}else{
 				$insert = "INSERT INTO content(slug, data, file) 
 						   VALUES(
@@ -99,7 +102,7 @@ class Gusto{
 				}
 			}
 
-			if($this->_edit){
+			if($this->_edit && $element->nodeName !== 'img'){
 				$editAttribute = $doc->createAttribute('contenteditable');
 				$editAttribute->value = 'true';
 
@@ -149,7 +152,7 @@ class Gusto{
 
 	//*******************//
 
-	public function saveElement($id, $content, $caller_file){
+	public function saveElement($id, $content, $caller_file, $tag){
 		$checkQuery = "SELECT id, slug, data
 						FROM content
 						WHERE 
