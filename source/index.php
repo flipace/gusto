@@ -7,8 +7,10 @@
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<title>gusto | micro content management</title>
-	<link rel="stylesheet" href="css/main.css">
+	<link rel="stylesheet" href="css/uikit.min.css">
+	<link rel="stylesheet" href="gusto/Gusto.css" />
 	<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+	<script type="text/javascript" src="js/uikit.min.js"></script>
 	<!--<script src="js/ckeditor/ckeditor.js"></script>-->
 </head>
 <body>

@@ -13,12 +13,14 @@ var Gusto = {
 
 $(function(){
 	$('body').on('click', 'img[data-gusto]', function(){
-		$gusto = $(this);
-		var src = prompt("Set new image source: ", $gusto.attr('src'));
+		if(gustoble){
+			$gusto = $(this);
+			var src = prompt("Set new image source: ", $gusto.attr('src'));
 
-		if(src !== null){
-			Gusto.saveElement($gusto.data('gusto'), src, $gusto.prop("tagName"));
-			$gusto.attr('src', src);
+			if(src !== null){
+				Gusto.saveElement($gusto.data('gusto'), src, $gusto.prop("tagName"));
+				$gusto.attr('src', src);
+			}
 		}
 	});
 
@@ -45,25 +47,72 @@ $(function(){
 		return $gusto;
 	});
 
-	$('body').on('mouseenter', '[data-gusto]', function(){
-		$gusto = $(this);
-		var width 	= $gusto.outerWidth();
-		var height 	= $gusto.outerHeight();
+	prevElement = false;
+	gustoble = true;
 
-		$('#gusto-hint').show();
-		$('#gusto-hint').css({
-			width: 10,
-			height: height,
-			left: $gusto.offset().left,
-			top: $gusto.offset().top
-		});
+	$('body').on('mouseenter', '[data-gusto]', function(){
+		if(gustoble){
+			clearTimeout(delGustoInterval);
+
+			if(prevElement)
+				prevElement.stop().css({ opacity: 1 });
+
+			$gusto = $(this);
+			
+			var width 	= $gusto.outerWidth();
+			var height 	= $gusto.outerHeight();
+
+			$('#gusto-hint').show();
+			
+			$('#gusto-hint').css({
+				left: $gusto.offset().left,
+				top: $gusto.offset().top+height
+			});
+
+			$gusto.stop().animate({
+				opacity: 0.5
+			});
+
+			prevElement = $gusto;
+		}
 	});
 
-	$('body').on('mouseleave', '[data-gusto]', function(){
-		$('#gusto-hint').hide();
-	})
+	delGustoInterval = false;
 
-	var gusto_hint = '<div id="gusto-hint" style="z-index: 10000; background-color: rgba(255,219,50,0.5); position: absolute"></div>';
+	$('body').on('mouseleave', '[data-gusto]', function(){
+		if(gustoble){
+			delGustoInterval = setTimeout(function(){
+				$('#gusto-hint').hide();	
+
+				$gusto.stop().animate({
+					opacity: 1
+				});	
+			}, 5000);
+		}
+	});
+
+	$('body').on('click', '#gusto-hint i', function(){
+		$action = $(this);
+
+		if($action.hasClass('fa-copy')){
+			$('[contenteditable="true"]').attr('contenteditable', 'false');
+			$('body > *').each(function(){
+				if($(this).attr('id') != 'gusto-hint'){
+					$(this).on('click', function(){
+						$(this).after(prevElement);
+						$(this).unbind('click');
+						$('[contenteditable="false"]').attr('contenteditable', 'true');
+					})
+				}
+			});
+			gustoble = false;
+			clearTimeout(delGustoInterval);
+		}else if($action.hasClass('fa-trash-o')){
+			prevElement.remove();
+		}
+	});
+
+	var gusto_hint = '<div id="gusto-hint"><i class="fa fa-trash-o fa-lg"></i>&nbsp;&nbsp;&nbsp;<i class="fa fa-copy fa-lg"></i></div>';
 	$('body').append(gusto_hint);
 });
 

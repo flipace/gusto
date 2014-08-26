@@ -3,6 +3,10 @@ namespace flipace;
 
 use SQLite3;
 
+error_reporting(E_ALL);
+
+ini_set('display_errors',1);
+
 ob_start();
 
 class Gusto{
@@ -30,6 +34,7 @@ class Gusto{
 
 		if($this->checkMode('save')){
 			echo $this->saveElement($_POST['id'], $_POST['content'], $_POST['caller_file'], $_POST['tag']);
+			$this->_db->close();
 			exit;
 		}
 
@@ -40,7 +45,25 @@ class Gusto{
 
 		$this->initData();
 
+		$this->_db->close();
+
 		return $this;
+	}
+
+	public function initDatabase(){
+		// check if database exists, if not create one
+		if(!file_exists(__DIR__.'/'.$this->_db_name.'.db')){
+			$db = fopen(__DIR__.'/'.$this->_db_name.'.db','w') or die('Can\'t create gusto database file. - Maybe a permissions problem?');
+			fclose($db);
+		}
+
+		$this->_db = new SQLite3(__DIR__.'/'.$this->_db_name.'.db');
+
+		if(!$this->_db->query("SELECT name 
+						FROM sqlite_master 
+						WHERE type='table' AND name='content'")->fetchArray()){
+			$this->installDatabase($this->_db);
+		}
 	}
 
 	public function checkMode($mode){
@@ -117,22 +140,6 @@ class Gusto{
 		$script = '<script type="text/javascript">var GUSTO_CALLER_FILE = "'.$this->_caller_file.'";</script>
 					<script type="text/javascript" src="'.self::GUSTO_DIR.'Gusto.js"></script>';
 		$this->_markup = str_replace('</body>', $script.'</body>', $this->_markup);
-	}
-
-	public function initDatabase(){
-		// check if database exists, if not create one
-		if(!file_exists(__DIR__.'/'.$this->_db_name.'.db')){
-			$db = fopen(__DIR__.'/'.$this->_db_name.'.db','w') or die('Can\'t create gusto database file. - Maybe a permissions problem?');
-			fclose($db);
-		}
-
-		$this->_db = new SQLite3(__DIR__.'/'.$this->_db_name.'.db');
-
-		if(!$this->_db->query("SELECT name 
-						FROM sqlite_master 
-						WHERE type='table' AND name='content'")->fetchArray()){
-			$this->installDatabase($this->_db);
-		}
 	}
 
 	static function installDatabase($db){
