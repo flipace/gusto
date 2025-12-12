@@ -6,11 +6,9 @@ services:
       context: .
       dockerfile: Dockerfile
     restart: unless-stopped
-    # No ports - Coolify/Traefik handles routing
     expose:
       - "80"
     volumes:
-      # Persist SQLite database
       - gusto-data:/var/www/html/api
     environment:
       - APP_ENV=${APP_ENV:-production}
@@ -20,12 +18,18 @@ services:
       - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET:-whsec_xxx}
       - JWT_SECRET=${JWT_SECRET:-change-this-in-production}
     healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost/api/health"]
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost/health"]
       interval: 30s
       timeout: 10s
       retries: 3
       start_period: 10s
+    networks:
+      - coolify
 
 volumes:
   gusto-data:
     driver: local
+
+networks:
+  coolify:
+    external: true
