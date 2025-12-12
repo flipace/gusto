@@ -22,6 +22,9 @@ COPY source/ /var/www/html/
 
 # Create necessary directories and set permissions
 RUN mkdir -p /var/www/html/api/data \
+    && mkdir -p /var/log/supervisor \
+    && mkdir -p /var/log/nginx \
+    && mkdir -p /run/nginx \
     && chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html \
     && chmod -R 777 /var/www/html/api
