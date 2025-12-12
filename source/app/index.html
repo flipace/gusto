@@ -1,0 +1,2472 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#FF6B35">
+    <title>Gusto Chef - Private Chefs On Demand</title>
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary: #FF6B35;
+            --primary-dark: #E85A2A;
+            --secondary: #2C3E50;
+            --accent: #F7931E;
+            --success: #27AE60;
+            --warning: #F39C12;
+            --danger: #E74C3C;
+            --light: #F8F9FA;
+            --dark: #1A1A2E;
+            --gray-100: #F7F7F7;
+            --gray-200: #E9ECEF;
+            --gray-300: #DEE2E6;
+            --gray-400: #CED4DA;
+            --gray-500: #ADB5BD;
+            --gray-600: #6C757D;
+            --gray-700: #495057;
+            --gray-800: #343A40;
+            --radius: 16px;
+            --radius-sm: 8px;
+            --radius-lg: 24px;
+            --shadow: 0 4px 20px rgba(0,0,0,0.08);
+            --shadow-lg: 0 10px 40px rgba(0,0,0,0.12);
+            --safe-top: env(safe-area-inset-top);
+            --safe-bottom: env(safe-area-inset-bottom);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--light);
+            color: var(--dark);
+            min-height: 100vh;
+            min-height: 100dvh;
+            overflow-x: hidden;
+        }
+
+        /* App Container */
+        .app {
+            max-width: 480px;
+            margin: 0 auto;
+            min-height: 100vh;
+            min-height: 100dvh;
+            background: white;
+            position: relative;
+        }
+
+        /* Screens */
+        .screen {
+            display: none;
+            min-height: 100vh;
+            min-height: 100dvh;
+            padding-bottom: calc(80px + var(--safe-bottom));
+            animation: fadeIn 0.3s ease;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Header */
+        .header {
+            padding: calc(var(--safe-top) + 16px) 20px 16px;
+            background: white;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-title {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--dark);
+        }
+
+        .header-subtitle {
+            font-size: 14px;
+            color: var(--gray-600);
+            margin-top: 4px;
+        }
+
+        /* Search Bar */
+        .search-container {
+            padding: 0 20px 16px;
+        }
+
+        .search-bar {
+            display: flex;
+            align-items: center;
+            background: var(--gray-100);
+            border-radius: var(--radius);
+            padding: 14px 16px;
+            gap: 12px;
+        }
+
+        .search-bar i {
+            color: var(--gray-500);
+            font-size: 18px;
+        }
+
+        .search-bar input {
+            flex: 1;
+            border: none;
+            background: none;
+            font-size: 16px;
+            color: var(--dark);
+            outline: none;
+        }
+
+        .search-bar input::placeholder {
+            color: var(--gray-500);
+        }
+
+        /* Filter Tags */
+        .filter-tags {
+            display: flex;
+            gap: 8px;
+            padding: 0 20px 20px;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+
+        .filter-tags::-webkit-scrollbar {
+            display: none;
+        }
+
+        .filter-tag {
+            padding: 10px 18px;
+            background: var(--gray-100);
+            border-radius: 100px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--gray-700);
+            white-space: nowrap;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+        }
+
+        .filter-tag.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .filter-tag:active {
+            transform: scale(0.95);
+        }
+
+        /* Section */
+        .section {
+            padding: 0 20px 24px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .section-link {
+            font-size: 14px;
+            color: var(--primary);
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        /* Chef Cards */
+        .chef-grid {
+            display: grid;
+            gap: 16px;
+        }
+
+        .chef-card {
+            background: white;
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .chef-card:active {
+            transform: scale(0.98);
+        }
+
+        .chef-card-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            background: var(--gray-200);
+        }
+
+        .chef-card-content {
+            padding: 16px;
+        }
+
+        .chef-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+
+        .chef-card-name {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .chef-card-badge {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            background: var(--accent);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 100px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .chef-card-badge i {
+            font-size: 10px;
+        }
+
+        .chef-card-cuisines {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 12px;
+        }
+
+        .cuisine-tag {
+            background: var(--gray-100);
+            padding: 4px 10px;
+            border-radius: 100px;
+            font-size: 12px;
+            color: var(--gray-700);
+        }
+
+        .chef-card-stats {
+            display: flex;
+            gap: 16px;
+            padding-top: 12px;
+            border-top: 1px solid var(--gray-200);
+        }
+
+        .chef-stat {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            color: var(--gray-600);
+        }
+
+        .chef-stat i {
+            color: var(--gray-400);
+        }
+
+        .chef-card-price {
+            margin-left: auto;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        /* Premium Badge */
+        .premium-badge {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 100px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* Featured Horizontal Scroll */
+        .featured-scroll {
+            display: flex;
+            gap: 16px;
+            overflow-x: auto;
+            padding: 0 20px 8px;
+            margin: 0 -20px;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+
+        .featured-scroll::-webkit-scrollbar {
+            display: none;
+        }
+
+        .featured-card {
+            flex-shrink: 0;
+            width: 280px;
+            background: white;
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            position: relative;
+        }
+
+        .featured-card-image {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+        }
+
+        .featured-card-content {
+            padding: 14px;
+        }
+
+        .featured-card-name {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .featured-card-desc {
+            font-size: 13px;
+            color: var(--gray-600);
+            margin-bottom: 8px;
+        }
+
+        .featured-card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .featured-rating {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .featured-rating i {
+            color: var(--warning);
+        }
+
+        .featured-price {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 480px;
+            background: white;
+            padding: 12px 20px calc(12px + var(--safe-bottom));
+            display: flex;
+            justify-content: space-around;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
+            z-index: 1000;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            color: var(--gray-500);
+            text-decoration: none;
+            font-size: 11px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: color 0.2s;
+            padding: 4px 12px;
+        }
+
+        .nav-item i {
+            font-size: 22px;
+        }
+
+        .nav-item.active {
+            color: var(--primary);
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 16px 24px;
+            border-radius: var(--radius);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:active {
+            background: var(--primary-dark);
+            transform: scale(0.98);
+        }
+
+        .btn-secondary {
+            background: var(--gray-100);
+            color: var(--dark);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-block {
+            width: 100%;
+        }
+
+        .btn-lg {
+            padding: 18px 32px;
+            font-size: 17px;
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--gray-700);
+            margin-bottom: 8px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 16px;
+            border: 2px solid var(--gray-200);
+            border-radius: var(--radius-sm);
+            font-size: 16px;
+            transition: border-color 0.2s;
+            outline: none;
+        }
+
+        .form-input:focus {
+            border-color: var(--primary);
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            align-items: flex-end;
+            justify-content: center;
+            z-index: 2000;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: white;
+            width: 100%;
+            max-width: 480px;
+            max-height: 90vh;
+            border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+            padding: 24px 20px calc(24px + var(--safe-bottom));
+            overflow-y: auto;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+
+        .modal-handle {
+            width: 40px;
+            height: 4px;
+            background: var(--gray-300);
+            border-radius: 2px;
+            margin: 0 auto 20px;
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        /* Chef Detail */
+        .chef-detail-header {
+            position: relative;
+        }
+
+        .chef-detail-image {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+        }
+
+        .chef-detail-back {
+            position: absolute;
+            top: calc(var(--safe-top) + 16px);
+            left: 16px;
+            width: 40px;
+            height: 40px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+        }
+
+        .chef-detail-favorite {
+            position: absolute;
+            top: calc(var(--safe-top) + 16px);
+            right: 16px;
+            width: 40px;
+            height: 40px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            border: none;
+        }
+
+        .chef-detail-favorite.active i {
+            color: var(--danger);
+        }
+
+        .chef-detail-content {
+            padding: 24px 20px;
+            margin-top: -24px;
+            background: white;
+            border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+            position: relative;
+        }
+
+        .chef-detail-name {
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .chef-detail-location {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--gray-600);
+            font-size: 15px;
+            margin-bottom: 16px;
+        }
+
+        .chef-detail-rating {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .rating-stars {
+            display: flex;
+            gap: 4px;
+            color: var(--warning);
+        }
+
+        .rating-value {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .rating-count {
+            color: var(--gray-500);
+            font-size: 14px;
+        }
+
+        .chef-detail-bio {
+            font-size: 15px;
+            line-height: 1.6;
+            color: var(--gray-700);
+            margin-bottom: 24px;
+        }
+
+        .chef-detail-section {
+            margin-bottom: 24px;
+        }
+
+        .chef-detail-section-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .chef-specialties {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .specialty-tag {
+            background: var(--gray-100);
+            padding: 8px 16px;
+            border-radius: 100px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        /* Gallery */
+        .chef-gallery {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+
+        .gallery-item {
+            aspect-ratio: 1;
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Pricing Card */
+        .pricing-card {
+            background: var(--gray-100);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+
+        .pricing-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .pricing-row:last-child {
+            margin-bottom: 0;
+            padding-top: 12px;
+            border-top: 2px solid var(--gray-300);
+        }
+
+        .pricing-label {
+            color: var(--gray-600);
+        }
+
+        .pricing-value {
+            font-weight: 600;
+        }
+
+        .pricing-total {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        /* Reviews */
+        .review-card {
+            background: var(--gray-100);
+            border-radius: var(--radius);
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .review-author {
+            font-weight: 600;
+        }
+
+        .review-date {
+            font-size: 13px;
+            color: var(--gray-500);
+        }
+
+        .review-rating {
+            display: flex;
+            gap: 4px;
+            color: var(--warning);
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .review-text {
+            font-size: 14px;
+            color: var(--gray-700);
+            line-height: 1.5;
+        }
+
+        /* Book Button Fixed */
+        .book-button-container {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 480px;
+            background: white;
+            padding: 16px 20px calc(16px + var(--safe-bottom));
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .book-price-info {
+            flex: 1;
+        }
+
+        .book-price {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .book-price-label {
+            font-size: 13px;
+            color: var(--gray-500);
+        }
+
+        /* Subscription Plans */
+        .plan-card {
+            border: 2px solid var(--gray-200);
+            border-radius: var(--radius);
+            padding: 24px;
+            margin-bottom: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .plan-card.popular {
+            border-color: var(--primary);
+        }
+
+        .plan-card.selected {
+            border-color: var(--primary);
+            background: rgba(255, 107, 53, 0.05);
+        }
+
+        .plan-popular-badge {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--primary);
+            color: white;
+            padding: 4px 16px;
+            border-radius: 100px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .plan-name {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .plan-price {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+
+        .plan-price span {
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--gray-500);
+        }
+
+        .plan-features {
+            list-style: none;
+            margin-top: 16px;
+        }
+
+        .plan-features li {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 0;
+            font-size: 14px;
+            color: var(--gray-700);
+        }
+
+        .plan-features li i {
+            color: var(--success);
+            font-size: 16px;
+        }
+
+        /* Booking Form */
+        .date-picker {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+        }
+
+        .date-option {
+            flex-shrink: 0;
+            padding: 12px 16px;
+            border: 2px solid var(--gray-200);
+            border-radius: var(--radius-sm);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: white;
+        }
+
+        .date-option.selected {
+            border-color: var(--primary);
+            background: var(--primary);
+            color: white;
+        }
+
+        .date-day {
+            font-size: 12px;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .date-num {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .time-slots {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+
+        .time-slot {
+            padding: 12px;
+            border: 2px solid var(--gray-200);
+            border-radius: var(--radius-sm);
+            text-align: center;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+            background: white;
+        }
+
+        .time-slot.selected {
+            border-color: var(--primary);
+            background: var(--primary);
+            color: white;
+        }
+
+        .time-slot:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Stepper */
+        .stepper {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .stepper-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 2px solid var(--gray-300);
+            background: white;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--dark);
+        }
+
+        .stepper-btn:active {
+            background: var(--gray-100);
+        }
+
+        .stepper-value {
+            font-size: 24px;
+            font-weight: 700;
+            min-width: 40px;
+            text-align: center;
+        }
+
+        /* Profile */
+        .profile-header {
+            text-align: center;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+        }
+
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 4px solid white;
+            margin-bottom: 16px;
+            object-fit: cover;
+        }
+
+        .profile-name {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .profile-email {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .profile-menu {
+            padding: 20px;
+        }
+
+        .profile-menu-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px;
+            background: white;
+            border-radius: var(--radius-sm);
+            margin-bottom: 8px;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+        }
+
+        .profile-menu-item i {
+            width: 24px;
+            color: var(--primary);
+        }
+
+        .profile-menu-item span {
+            flex: 1;
+            font-weight: 500;
+        }
+
+        .profile-menu-item .arrow {
+            color: var(--gray-400);
+        }
+
+        /* Bookings List */
+        .booking-card {
+            background: white;
+            border-radius: var(--radius);
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: var(--shadow);
+        }
+
+        .booking-card-header {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .booking-chef-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .booking-info {
+            flex: 1;
+        }
+
+        .booking-chef-name {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .booking-date {
+            font-size: 14px;
+            color: var(--gray-600);
+        }
+
+        .booking-status {
+            padding: 6px 12px;
+            border-radius: 100px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .booking-status.confirmed {
+            background: rgba(39, 174, 96, 0.1);
+            color: var(--success);
+        }
+
+        .booking-status.pending {
+            background: rgba(243, 156, 18, 0.1);
+            color: var(--warning);
+        }
+
+        .booking-status.completed {
+            background: var(--gray-100);
+            color: var(--gray-600);
+        }
+
+        .booking-details {
+            display: flex;
+            gap: 16px;
+            padding-top: 12px;
+            border-top: 1px solid var(--gray-200);
+            font-size: 13px;
+            color: var(--gray-600);
+        }
+
+        .booking-details span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Login/Register */
+        .auth-screen {
+            padding: calc(var(--safe-top) + 40px) 24px 40px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .auth-logo {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .auth-logo h1 {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .auth-logo p {
+            color: var(--gray-600);
+            margin-top: 8px;
+        }
+
+        .auth-tabs {
+            display: flex;
+            background: var(--gray-100);
+            border-radius: var(--radius);
+            padding: 4px;
+            margin-bottom: 32px;
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .auth-tab.active {
+            background: white;
+            box-shadow: var(--shadow);
+        }
+
+        .auth-form {
+            flex: 1;
+        }
+
+        .auth-divider {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin: 24px 0;
+            color: var(--gray-500);
+            font-size: 14px;
+        }
+
+        .auth-divider::before,
+        .auth-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--gray-300);
+        }
+
+        .social-login {
+            display: flex;
+            gap: 12px;
+        }
+
+        .social-btn {
+            flex: 1;
+            padding: 14px;
+            border: 2px solid var(--gray-200);
+            border-radius: var(--radius-sm);
+            background: white;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Loading */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--gray-200);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .empty-state i {
+            font-size: 64px;
+            color: var(--gray-300);
+            margin-bottom: 16px;
+        }
+
+        .empty-state h3 {
+            font-size: 20px;
+            margin-bottom: 8px;
+        }
+
+        .empty-state p {
+            color: var(--gray-600);
+            margin-bottom: 24px;
+        }
+
+        /* Toasts */
+        .toast-container {
+            position: fixed;
+            top: calc(var(--safe-top) + 16px);
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 3000;
+            width: calc(100% - 40px);
+            max-width: 400px;
+        }
+
+        .toast {
+            background: var(--dark);
+            color: white;
+            padding: 16px 20px;
+            border-radius: var(--radius-sm);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .toast.success {
+            background: var(--success);
+        }
+
+        .toast.error {
+            background: var(--danger);
+        }
+
+        /* Utilities */
+        .hidden {
+            display: none !important;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .mt-4 {
+            margin-top: 16px;
+        }
+
+        .mb-4 {
+            margin-bottom: 16px;
+        }
+
+        .p-4 {
+            padding: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="app" id="app">
+        <!-- Toast Container -->
+        <div class="toast-container" id="toastContainer"></div>
+
+        <!-- ============ HOME SCREEN ============ -->
+        <div class="screen active" id="homeScreen">
+            <div class="header">
+                <div class="header-title">Gusto Chef</div>
+                <div class="header-subtitle" id="userGreeting">Entdecke Privat-Köche in deiner Nähe</div>
+            </div>
+
+            <div class="search-container">
+                <div class="search-bar" onclick="showSearchModal()">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Suche nach Küche, Koch oder Gericht..." readonly>
+                    <i class="fas fa-sliders-h"></i>
+                </div>
+            </div>
+
+            <div class="filter-tags" id="cuisineFilters">
+                <button class="filter-tag active" data-cuisine="">Alle</button>
+                <button class="filter-tag" data-cuisine="italian">Italienisch</button>
+                <button class="filter-tag" data-cuisine="asian">Asiatisch</button>
+                <button class="filter-tag" data-cuisine="french">Französisch</button>
+                <button class="filter-tag" data-cuisine="mediterranean">Mediterran</button>
+                <button class="filter-tag" data-cuisine="german">Deutsch</button>
+                <button class="filter-tag" data-cuisine="vegan">Vegan</button>
+            </div>
+
+            <div class="section">
+                <div class="section-header">
+                    <h2 class="section-title">Premium Köche</h2>
+                    <a href="#" class="section-link" onclick="showAllChefs()">Alle ansehen</a>
+                </div>
+                <div class="featured-scroll" id="featuredChefs">
+                    <!-- Filled by JS -->
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-header">
+                    <h2 class="section-title">In deiner Nähe</h2>
+                </div>
+                <div class="chef-grid" id="nearbyChefs">
+                    <!-- Filled by JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- ============ SEARCH SCREEN ============ -->
+        <div class="screen" id="searchScreen">
+            <div class="header">
+                <div style="display: flex; align-items: center; gap: 16px;">
+                    <i class="fas fa-arrow-left" style="font-size: 20px; cursor: pointer;" onclick="showScreen('homeScreen')"></i>
+                    <input type="text" id="searchInput" placeholder="Suche..." class="form-input" style="flex: 1;">
+                </div>
+            </div>
+            <div class="section">
+                <div class="chef-grid" id="searchResults">
+                    <div class="empty-state">
+                        <i class="fas fa-search"></i>
+                        <h3>Suche nach Köchen</h3>
+                        <p>Gib einen Suchbegriff ein</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============ CHEF DETAIL SCREEN ============ -->
+        <div class="screen" id="chefDetailScreen">
+            <div class="chef-detail-header">
+                <img class="chef-detail-image" id="chefDetailImage" src="" alt="Chef">
+                <div class="chef-detail-back" onclick="showScreen('homeScreen')">
+                    <i class="fas fa-arrow-left"></i>
+                </div>
+                <button class="chef-detail-favorite" id="favoriteBtn" onclick="toggleFavorite()">
+                    <i class="far fa-heart"></i>
+                </button>
+            </div>
+            <div class="chef-detail-content" id="chefDetailContent">
+                <!-- Filled by JS -->
+            </div>
+            <div class="book-button-container" id="bookButtonContainer">
+                <div class="book-price-info">
+                    <div class="book-price" id="chefPrice">50 €</div>
+                    <div class="book-price-label">pro Stunde</div>
+                </div>
+                <button class="btn btn-primary btn-lg" onclick="showBookingModal()">
+                    <i class="fas fa-calendar-check"></i>
+                    Jetzt buchen
+                </button>
+            </div>
+        </div>
+
+        <!-- ============ BOOKINGS SCREEN ============ -->
+        <div class="screen" id="bookingsScreen">
+            <div class="header">
+                <div class="header-title">Meine Buchungen</div>
+            </div>
+            <div class="section" id="bookingsList">
+                <!-- Filled by JS -->
+            </div>
+        </div>
+
+        <!-- ============ SUBSCRIPTION SCREEN ============ -->
+        <div class="screen" id="subscriptionScreen">
+            <div class="header">
+                <div class="header-title">Gusto Abo</div>
+                <div class="header-subtitle">Wähle deinen Plan</div>
+            </div>
+            <div class="section" id="subscriptionPlans">
+                <!-- Basic Plan -->
+                <div class="plan-card" data-plan="basic">
+                    <div class="plan-name">Gusto Basic</div>
+                    <div class="plan-price">9,99 € <span>/Monat</span></div>
+                    <ul class="plan-features">
+                        <li><i class="fas fa-check"></i> 1 Buchung pro Monat</li>
+                        <li><i class="fas fa-check"></i> 10% Service-Gebühr</li>
+                        <li><i class="fas fa-check"></i> Zugang zu allen Köchen</li>
+                        <li><i class="fas fa-check"></i> In-App Nachrichten</li>
+                    </ul>
+                </div>
+
+                <!-- Plus Plan -->
+                <div class="plan-card popular" data-plan="plus">
+                    <div class="plan-popular-badge">Beliebt</div>
+                    <div class="plan-name">Gusto Plus</div>
+                    <div class="plan-price">24,99 € <span>/Monat</span></div>
+                    <ul class="plan-features">
+                        <li><i class="fas fa-check"></i> 4 Buchungen pro Monat</li>
+                        <li><i class="fas fa-check"></i> Nur 5% Service-Gebühr</li>
+                        <li><i class="fas fa-check"></i> Prioritäts-Buchung</li>
+                        <li><i class="fas fa-check"></i> Priority Support</li>
+                        <li><i class="fas fa-check"></i> Buchungsverlauf & Favoriten</li>
+                    </ul>
+                </div>
+
+                <!-- Premium Plan -->
+                <div class="plan-card" data-plan="premium">
+                    <div class="plan-name">Gusto Premium</div>
+                    <div class="plan-price">49,99 € <span>/Monat</span></div>
+                    <ul class="plan-features">
+                        <li><i class="fas fa-check"></i> Unbegrenzte Buchungen</li>
+                        <li><i class="fas fa-check"></i> Keine Service-Gebühren!</li>
+                        <li><i class="fas fa-check"></i> Exklusive Premium-Köche</li>
+                        <li><i class="fas fa-check"></i> 24/7 VIP Support</li>
+                        <li><i class="fas fa-check"></i> Kostenlose Stornierung</li>
+                        <li><i class="fas fa-check"></i> Exklusive Events</li>
+                    </ul>
+                </div>
+
+                <button class="btn btn-primary btn-block btn-lg mt-4" id="subscribeBtn" onclick="subscribe()">
+                    Plan auswählen
+                </button>
+            </div>
+        </div>
+
+        <!-- ============ PROFILE SCREEN ============ -->
+        <div class="screen" id="profileScreen">
+            <div class="profile-header">
+                <img class="profile-avatar" id="profileAvatar" src="https://api.dicebear.com/7.x/avataaars/svg?seed=guest" alt="Avatar">
+                <div class="profile-name" id="profileName">Gast</div>
+                <div class="profile-email" id="profileEmail">Nicht angemeldet</div>
+            </div>
+            <div class="profile-menu" id="profileMenu">
+                <div class="profile-menu-item" onclick="showScreen('subscriptionScreen')">
+                    <i class="fas fa-crown"></i>
+                    <span>Mein Abo</span>
+                    <i class="fas fa-chevron-right arrow"></i>
+                </div>
+                <div class="profile-menu-item" onclick="showFavorites()">
+                    <i class="fas fa-heart"></i>
+                    <span>Favoriten</span>
+                    <i class="fas fa-chevron-right arrow"></i>
+                </div>
+                <div class="profile-menu-item" onclick="showPaymentHistory()">
+                    <i class="fas fa-credit-card"></i>
+                    <span>Zahlungsverlauf</span>
+                    <i class="fas fa-chevron-right arrow"></i>
+                </div>
+                <div class="profile-menu-item" onclick="showSettings()">
+                    <i class="fas fa-cog"></i>
+                    <span>Einstellungen</span>
+                    <i class="fas fa-chevron-right arrow"></i>
+                </div>
+                <div class="profile-menu-item" onclick="showHelp()">
+                    <i class="fas fa-question-circle"></i>
+                    <span>Hilfe & Support</span>
+                    <i class="fas fa-chevron-right arrow"></i>
+                </div>
+                <div class="profile-menu-item" id="logoutBtn" onclick="logout()" style="display: none;">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Abmelden</span>
+                    <i class="fas fa-chevron-right arrow"></i>
+                </div>
+                <div class="profile-menu-item" id="loginBtn" onclick="showAuthModal()">
+                    <i class="fas fa-sign-in-alt"></i>
+                    <span>Anmelden</span>
+                    <i class="fas fa-chevron-right arrow"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============ BOTTOM NAVIGATION ============ -->
+        <nav class="bottom-nav" id="bottomNav">
+            <div class="nav-item active" onclick="showScreen('homeScreen')">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </div>
+            <div class="nav-item" onclick="showScreen('searchScreen')">
+                <i class="fas fa-search"></i>
+                <span>Suche</span>
+            </div>
+            <div class="nav-item" onclick="showScreen('bookingsScreen')">
+                <i class="fas fa-calendar"></i>
+                <span>Buchungen</span>
+            </div>
+            <div class="nav-item" onclick="showScreen('subscriptionScreen')">
+                <i class="fas fa-crown"></i>
+                <span>Abo</span>
+            </div>
+            <div class="nav-item" onclick="showScreen('profileScreen')">
+                <i class="fas fa-user"></i>
+                <span>Profil</span>
+            </div>
+        </nav>
+
+        <!-- ============ AUTH MODAL ============ -->
+        <div class="modal-overlay" id="authModal">
+            <div class="modal">
+                <div class="modal-handle"></div>
+                <div class="auth-logo">
+                    <h1>Gusto Chef</h1>
+                    <p>Dein Privatkoch, wann immer du willst</p>
+                </div>
+                <div class="auth-tabs">
+                    <div class="auth-tab active" onclick="switchAuthTab('login')">Anmelden</div>
+                    <div class="auth-tab" onclick="switchAuthTab('register')">Registrieren</div>
+                </div>
+                <form class="auth-form" id="loginForm" onsubmit="handleLogin(event)">
+                    <div class="form-group">
+                        <label class="form-label">E-Mail</label>
+                        <input type="email" class="form-input" name="email" placeholder="deine@email.de" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Passwort</label>
+                        <input type="password" class="form-input" name="password" placeholder="••••••••" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block btn-lg">Anmelden</button>
+                </form>
+                <form class="auth-form hidden" id="registerForm" onsubmit="handleRegister(event)">
+                    <div class="form-group">
+                        <label class="form-label">Vorname</label>
+                        <input type="text" class="form-input" name="first_name" placeholder="Max" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Nachname</label>
+                        <input type="text" class="form-input" name="last_name" placeholder="Mustermann" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">E-Mail</label>
+                        <input type="email" class="form-input" name="email" placeholder="deine@email.de" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Telefon</label>
+                        <input type="tel" class="form-input" name="phone" placeholder="+49 123 456789">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Passwort</label>
+                        <input type="password" class="form-input" name="password" placeholder="Min. 8 Zeichen" minlength="8" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block btn-lg">Registrieren</button>
+                </form>
+                <div class="auth-divider">oder</div>
+                <div class="social-login">
+                    <button class="social-btn"><i class="fab fa-google"></i></button>
+                    <button class="social-btn"><i class="fab fa-apple"></i></button>
+                    <button class="social-btn"><i class="fab fa-facebook"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============ BOOKING MODAL ============ -->
+        <div class="modal-overlay" id="bookingModal">
+            <div class="modal">
+                <div class="modal-handle"></div>
+                <h2 class="modal-title">Buchung</h2>
+
+                <div class="form-group">
+                    <label class="form-label">Datum wählen</label>
+                    <div class="date-picker" id="datePicker">
+                        <!-- Generated by JS -->
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Uhrzeit</label>
+                    <div class="time-slots" id="timeSlots">
+                        <button class="time-slot" data-time="11:00">11:00</button>
+                        <button class="time-slot" data-time="12:00">12:00</button>
+                        <button class="time-slot" data-time="13:00">13:00</button>
+                        <button class="time-slot" data-time="17:00">17:00</button>
+                        <button class="time-slot" data-time="18:00">18:00</button>
+                        <button class="time-slot" data-time="19:00">19:00</button>
+                        <button class="time-slot" data-time="20:00">20:00</button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Dauer (Stunden)</label>
+                    <div class="stepper">
+                        <button class="stepper-btn" onclick="changeDuration(-1)">−</button>
+                        <span class="stepper-value" id="durationValue">3</span>
+                        <button class="stepper-btn" onclick="changeDuration(1)">+</button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Anzahl Gäste</label>
+                    <div class="stepper">
+                        <button class="stepper-btn" onclick="changeGuests(-1)">−</button>
+                        <span class="stepper-value" id="guestValue">4</span>
+                        <button class="stepper-btn" onclick="changeGuests(1)">+</button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Adresse</label>
+                    <input type="text" class="form-input" id="bookingAddress" placeholder="Musterstraße 123, 12345 Berlin">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Besondere Wünsche (optional)</label>
+                    <textarea class="form-input" id="bookingRequests" rows="3" placeholder="Allergien, Vorlieben, etc."></textarea>
+                </div>
+
+                <div class="pricing-card" id="bookingPricing">
+                    <div class="pricing-row">
+                        <span class="pricing-label">Koch (3h × 50€)</span>
+                        <span class="pricing-value" id="subtotalPrice">150,00 €</span>
+                    </div>
+                    <div class="pricing-row">
+                        <span class="pricing-label">Service-Gebühr (10%)</span>
+                        <span class="pricing-value" id="serviceFee">15,00 €</span>
+                    </div>
+                    <div class="pricing-row">
+                        <span class="pricing-label">Gesamt</span>
+                        <span class="pricing-total" id="totalPrice">165,00 €</span>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary btn-block btn-lg" onclick="confirmBooking()">
+                    <i class="fas fa-check"></i>
+                    Buchung bestätigen
+                </button>
+                <button class="btn btn-secondary btn-block mt-4" onclick="closeBookingModal()">
+                    Abbrechen
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==================== APP STATE ====================
+        const state = {
+            user: null,
+            token: localStorage.getItem('gusto_token'),
+            currentChef: null,
+            selectedPlan: 'plus',
+            booking: {
+                date: null,
+                time: null,
+                duration: 3,
+                guests: 4
+            },
+            chefs: []
+        };
+
+        const API_URL = 'api';
+
+        // ==================== DEMO DATA ====================
+        const demoChefs = [
+            {
+                id: 1,
+                first_name: 'Marco',
+                last_name: 'Rossi',
+                avatar_url: 'https://images.unsplash.com/photo-1577219491135-ce391730fb2c?w=400',
+                bio: 'Ausgebildet in Italien, bringe ich authentische Pasta und mediterrane Küche direkt in dein Zuhause.',
+                specialties: ['Pasta', 'Risotto', 'Tiramisu'],
+                cuisines: ['Italienisch', 'Mediterran'],
+                hourly_rate: 5500,
+                min_hours: 2,
+                max_guests: 10,
+                rating_avg: 4.9,
+                rating_count: 127,
+                total_bookings: 234,
+                is_premium_listing: 1,
+                location_city: 'Berlin',
+                gallery: [
+                    'https://images.unsplash.com/photo-1546549032-9571cd6b27df?w=300',
+                    'https://images.unsplash.com/photo-1473093295043-cdd812d0e601?w=300',
+                    'https://images.unsplash.com/photo-1555949258-eb67b1ef0ceb?w=300'
+                ]
+            },
+            {
+                id: 2,
+                first_name: 'Yuki',
+                last_name: 'Tanaka',
+                avatar_url: 'https://images.unsplash.com/photo-1595273670150-bd0c3c392e46?w=400',
+                bio: 'Japanische Küche mit modernem Twist. Sushi, Ramen und mehr - alles frisch zubereitet.',
+                specialties: ['Sushi', 'Ramen', 'Tempura'],
+                cuisines: ['Japanisch', 'Asiatisch'],
+                hourly_rate: 6500,
+                min_hours: 3,
+                max_guests: 8,
+                rating_avg: 4.8,
+                rating_count: 89,
+                total_bookings: 156,
+                is_premium_listing: 1,
+                location_city: 'München'
+            },
+            {
+                id: 3,
+                first_name: 'Sophie',
+                last_name: 'Dubois',
+                avatar_url: 'https://images.unsplash.com/photo-1583394293214-28ez9e9d8b7b3?w=400',
+                bio: 'Französische Haute Cuisine für besondere Anlässe. Gelernt in Paris, jetzt für dich da.',
+                specialties: ['Beef Bourguignon', 'Soufflé', 'Crème Brûlée'],
+                cuisines: ['Französisch'],
+                hourly_rate: 7500,
+                min_hours: 3,
+                max_guests: 12,
+                rating_avg: 5.0,
+                rating_count: 64,
+                total_bookings: 98,
+                is_premium_listing: 1,
+                location_city: 'Hamburg'
+            },
+            {
+                id: 4,
+                first_name: 'Anna',
+                last_name: 'Müller',
+                avatar_url: 'https://images.unsplash.com/photo-1556911220-bff31c812dba?w=400',
+                bio: 'Vegane Kreationen die begeistern. Gesund, lecker und kreativ.',
+                specialties: ['Buddha Bowls', 'Vegane Desserts', 'Smoothie Bowls'],
+                cuisines: ['Vegan', 'Gesund'],
+                hourly_rate: 4500,
+                min_hours: 2,
+                max_guests: 8,
+                rating_avg: 4.7,
+                rating_count: 156,
+                total_bookings: 312,
+                is_premium_listing: 0,
+                location_city: 'Berlin'
+            },
+            {
+                id: 5,
+                first_name: 'Carlos',
+                last_name: 'Rodriguez',
+                avatar_url: 'https://images.unsplash.com/photo-1512485694743-9c9538b4e6e0?w=400',
+                bio: 'Tapas, Paella und mehr - authentische spanische Küche mit Leidenschaft.',
+                specialties: ['Paella', 'Tapas', 'Churros'],
+                cuisines: ['Spanisch', 'Mediterran'],
+                hourly_rate: 5000,
+                min_hours: 2,
+                max_guests: 15,
+                rating_avg: 4.6,
+                rating_count: 203,
+                total_bookings: 445,
+                is_premium_listing: 0,
+                location_city: 'Frankfurt'
+            },
+            {
+                id: 6,
+                first_name: 'Thomas',
+                last_name: 'Weber',
+                avatar_url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400',
+                bio: 'Deutsche Küche neu interpretiert. Von Schnitzel bis Sauerbraten.',
+                specialties: ['Schnitzel', 'Sauerbraten', 'Käsespätzle'],
+                cuisines: ['Deutsch', 'Regional'],
+                hourly_rate: 4000,
+                min_hours: 2,
+                max_guests: 12,
+                rating_avg: 4.5,
+                rating_count: 178,
+                total_bookings: 523,
+                is_premium_listing: 0,
+                location_city: 'Stuttgart'
+            }
+        ];
+
+        state.chefs = demoChefs;
+
+        // ==================== INITIALIZATION ====================
+        document.addEventListener('DOMContentLoaded', () => {
+            initApp();
+        });
+
+        function initApp() {
+            renderFeaturedChefs();
+            renderNearbyChefs();
+            initDatePicker();
+            initFilters();
+            initPlanSelection();
+            initTimeSlots();
+
+            if (state.token) {
+                loadUser();
+            }
+        }
+
+        // ==================== API CALLS ====================
+        async function apiCall(endpoint, method = 'GET', body = null) {
+            const options = {
+                method,
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            };
+
+            if (state.token) {
+                options.headers['Authorization'] = `Bearer ${state.token}`;
+            }
+
+            if (body) {
+                options.body = JSON.stringify(body);
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/${endpoint}`, options);
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'API Error');
+                }
+
+                return data;
+            } catch (error) {
+                console.error('API Error:', error);
+                throw error;
+            }
+        }
+
+        // ==================== AUTH ====================
+        async function handleLogin(e) {
+            e.preventDefault();
+            const form = e.target;
+            const data = {
+                email: form.email.value,
+                password: form.password.value
+            };
+
+            try {
+                // Demo login
+                state.user = {
+                    id: 1,
+                    email: data.email,
+                    first_name: 'Max',
+                    last_name: 'Mustermann'
+                };
+                state.token = 'demo_token';
+                localStorage.setItem('gusto_token', state.token);
+
+                updateProfileUI();
+                closeAuthModal();
+                showToast('Erfolgreich angemeldet!', 'success');
+            } catch (error) {
+                showToast(error.message, 'error');
+            }
+        }
+
+        async function handleRegister(e) {
+            e.preventDefault();
+            const form = e.target;
+            const data = {
+                email: form.email.value,
+                password: form.password.value,
+                first_name: form.first_name.value,
+                last_name: form.last_name.value,
+                phone: form.phone.value,
+                user_type: 'customer'
+            };
+
+            try {
+                // Demo registration
+                state.user = {
+                    id: 1,
+                    email: data.email,
+                    first_name: data.first_name,
+                    last_name: data.last_name
+                };
+                state.token = 'demo_token';
+                localStorage.setItem('gusto_token', state.token);
+
+                updateProfileUI();
+                closeAuthModal();
+                showToast('Willkommen bei Gusto Chef!', 'success');
+            } catch (error) {
+                showToast(error.message, 'error');
+            }
+        }
+
+        function loadUser() {
+            // Demo user
+            state.user = {
+                id: 1,
+                email: 'demo@gusto.app',
+                first_name: 'Max',
+                last_name: 'Mustermann'
+            };
+            updateProfileUI();
+        }
+
+        function logout() {
+            state.user = null;
+            state.token = null;
+            localStorage.removeItem('gusto_token');
+            updateProfileUI();
+            showToast('Abgemeldet', 'success');
+        }
+
+        function updateProfileUI() {
+            const profileName = document.getElementById('profileName');
+            const profileEmail = document.getElementById('profileEmail');
+            const profileAvatar = document.getElementById('profileAvatar');
+            const loginBtn = document.getElementById('loginBtn');
+            const logoutBtn = document.getElementById('logoutBtn');
+            const userGreeting = document.getElementById('userGreeting');
+
+            if (state.user) {
+                profileName.textContent = `${state.user.first_name} ${state.user.last_name}`;
+                profileEmail.textContent = state.user.email;
+                profileAvatar.src = `https://api.dicebear.com/7.x/avataaars/svg?seed=${state.user.email}`;
+                loginBtn.style.display = 'none';
+                logoutBtn.style.display = 'flex';
+                userGreeting.textContent = `Hallo ${state.user.first_name}!`;
+            } else {
+                profileName.textContent = 'Gast';
+                profileEmail.textContent = 'Nicht angemeldet';
+                profileAvatar.src = 'https://api.dicebear.com/7.x/avataaars/svg?seed=guest';
+                loginBtn.style.display = 'flex';
+                logoutBtn.style.display = 'none';
+                userGreeting.textContent = 'Entdecke Privat-Köche in deiner Nähe';
+            }
+        }
+
+        // ==================== RENDERING ====================
+        function renderFeaturedChefs() {
+            const container = document.getElementById('featuredChefs');
+            const featured = state.chefs.filter(c => c.is_premium_listing);
+
+            container.innerHTML = featured.map(chef => `
+                <div class="featured-card" onclick="showChefDetail(${chef.id})">
+                    ${chef.is_premium_listing ? '<div class="premium-badge"><i class="fas fa-crown"></i> Premium</div>' : ''}
+                    <img class="featured-card-image" src="${chef.avatar_url}" alt="${chef.first_name}">
+                    <div class="featured-card-content">
+                        <div class="featured-card-name">${chef.first_name} ${chef.last_name}</div>
+                        <div class="featured-card-desc">${chef.cuisines.join(' • ')}</div>
+                        <div class="featured-card-footer">
+                            <div class="featured-rating">
+                                <i class="fas fa-star"></i>
+                                ${chef.rating_avg} (${chef.rating_count})
+                            </div>
+                            <div class="featured-price">${formatPrice(chef.hourly_rate)}/h</div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderNearbyChefs() {
+            const container = document.getElementById('nearbyChefs');
+
+            container.innerHTML = state.chefs.map(chef => `
+                <div class="chef-card" onclick="showChefDetail(${chef.id})">
+                    <img class="chef-card-image" src="${chef.avatar_url}" alt="${chef.first_name}">
+                    <div class="chef-card-content">
+                        <div class="chef-card-header">
+                            <div class="chef-card-name">${chef.first_name} ${chef.last_name}</div>
+                            <div class="chef-card-badge">
+                                <i class="fas fa-star"></i>
+                                ${chef.rating_avg}
+                            </div>
+                        </div>
+                        <div class="chef-card-cuisines">
+                            ${chef.cuisines.map(c => `<span class="cuisine-tag">${c}</span>`).join('')}
+                        </div>
+                        <div class="chef-card-stats">
+                            <div class="chef-stat">
+                                <i class="fas fa-utensils"></i>
+                                ${chef.total_bookings} Buchungen
+                            </div>
+                            <div class="chef-stat">
+                                <i class="fas fa-map-marker-alt"></i>
+                                ${chef.location_city}
+                            </div>
+                            <div class="chef-card-price">${formatPrice(chef.hourly_rate)}/h</div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function showChefDetail(chefId) {
+            const chef = state.chefs.find(c => c.id === chefId);
+            if (!chef) return;
+
+            state.currentChef = chef;
+
+            document.getElementById('chefDetailImage').src = chef.avatar_url;
+            document.getElementById('chefPrice').textContent = formatPrice(chef.hourly_rate);
+
+            const content = document.getElementById('chefDetailContent');
+            content.innerHTML = `
+                <h1 class="chef-detail-name">${chef.first_name} ${chef.last_name}</h1>
+                <div class="chef-detail-location">
+                    <i class="fas fa-map-marker-alt"></i>
+                    ${chef.location_city}
+                </div>
+                <div class="chef-detail-rating">
+                    <div class="rating-stars">
+                        ${getStarRating(chef.rating_avg)}
+                    </div>
+                    <span class="rating-value">${chef.rating_avg}</span>
+                    <span class="rating-count">(${chef.rating_count} Bewertungen)</span>
+                </div>
+                <p class="chef-detail-bio">${chef.bio}</p>
+
+                <div class="chef-detail-section">
+                    <h3 class="chef-detail-section-title">Spezialitäten</h3>
+                    <div class="chef-specialties">
+                        ${chef.specialties.map(s => `<span class="specialty-tag">${s}</span>`).join('')}
+                    </div>
+                </div>
+
+                <div class="chef-detail-section">
+                    <h3 class="chef-detail-section-title">Küchen</h3>
+                    <div class="chef-specialties">
+                        ${chef.cuisines.map(c => `<span class="specialty-tag">${c}</span>`).join('')}
+                    </div>
+                </div>
+
+                ${chef.gallery ? `
+                <div class="chef-detail-section">
+                    <h3 class="chef-detail-section-title">Galerie</h3>
+                    <div class="chef-gallery">
+                        ${chef.gallery.map(img => `
+                            <div class="gallery-item">
+                                <img src="${img}" alt="Gericht">
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                ` : ''}
+
+                <div class="chef-detail-section">
+                    <h3 class="chef-detail-section-title">Info</h3>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                        <div class="pricing-card" style="margin: 0;">
+                            <div style="color: var(--gray-600); font-size: 13px;">Min. Stunden</div>
+                            <div style="font-size: 20px; font-weight: 700;">${chef.min_hours}h</div>
+                        </div>
+                        <div class="pricing-card" style="margin: 0;">
+                            <div style="color: var(--gray-600); font-size: 13px;">Max. Gäste</div>
+                            <div style="font-size: 20px; font-weight: 700;">${chef.max_guests}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            updateBookingPricing();
+            showScreen('chefDetailScreen');
+        }
+
+        // ==================== NAVIGATION ====================
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+
+            const navMapping = {
+                'homeScreen': 0,
+                'searchScreen': 1,
+                'bookingsScreen': 2,
+                'subscriptionScreen': 3,
+                'profileScreen': 4
+            };
+
+            if (navMapping[screenId] !== undefined) {
+                document.querySelectorAll('.nav-item')[navMapping[screenId]].classList.add('active');
+            }
+
+            // Show/hide bottom nav and book button
+            const bottomNav = document.getElementById('bottomNav');
+            const bookBtn = document.getElementById('bookButtonContainer');
+
+            if (screenId === 'chefDetailScreen') {
+                bottomNav.style.display = 'none';
+                bookBtn.style.display = 'flex';
+            } else {
+                bottomNav.style.display = 'flex';
+                bookBtn.style.display = 'none';
+            }
+
+            // Load bookings if on bookings screen
+            if (screenId === 'bookingsScreen') {
+                renderBookings();
+            }
+        }
+
+        // ==================== MODALS ====================
+        function showAuthModal() {
+            document.getElementById('authModal').classList.add('active');
+        }
+
+        function closeAuthModal() {
+            document.getElementById('authModal').classList.remove('active');
+        }
+
+        function switchAuthTab(tab) {
+            const tabs = document.querySelectorAll('.auth-tab');
+            const loginForm = document.getElementById('loginForm');
+            const registerForm = document.getElementById('registerForm');
+
+            tabs.forEach(t => t.classList.remove('active'));
+
+            if (tab === 'login') {
+                tabs[0].classList.add('active');
+                loginForm.classList.remove('hidden');
+                registerForm.classList.add('hidden');
+            } else {
+                tabs[1].classList.add('active');
+                loginForm.classList.add('hidden');
+                registerForm.classList.remove('hidden');
+            }
+        }
+
+        function showBookingModal() {
+            if (!state.user) {
+                showAuthModal();
+                showToast('Bitte melde dich an um zu buchen', 'error');
+                return;
+            }
+            document.getElementById('bookingModal').classList.add('active');
+        }
+
+        function closeBookingModal() {
+            document.getElementById('bookingModal').classList.remove('active');
+        }
+
+        // ==================== BOOKING ====================
+        function initDatePicker() {
+            const container = document.getElementById('datePicker');
+            const days = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
+            const dates = [];
+
+            for (let i = 0; i < 14; i++) {
+                const date = new Date();
+                date.setDate(date.getDate() + i);
+                dates.push(date);
+            }
+
+            container.innerHTML = dates.map((date, i) => `
+                <div class="date-option ${i === 0 ? 'selected' : ''}" data-date="${date.toISOString().split('T')[0]}">
+                    <div class="date-day">${days[date.getDay()]}</div>
+                    <div class="date-num">${date.getDate()}</div>
+                </div>
+            `).join('');
+
+            state.booking.date = dates[0].toISOString().split('T')[0];
+
+            container.querySelectorAll('.date-option').forEach(opt => {
+                opt.addEventListener('click', () => {
+                    container.querySelectorAll('.date-option').forEach(o => o.classList.remove('selected'));
+                    opt.classList.add('selected');
+                    state.booking.date = opt.dataset.date;
+                });
+            });
+        }
+
+        function initTimeSlots() {
+            const container = document.getElementById('timeSlots');
+
+            container.querySelectorAll('.time-slot').forEach(slot => {
+                slot.addEventListener('click', () => {
+                    container.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
+                    slot.classList.add('selected');
+                    state.booking.time = slot.dataset.time;
+                });
+            });
+        }
+
+        function changeDuration(delta) {
+            const chef = state.currentChef;
+            const min = chef ? chef.min_hours : 2;
+            const max = 8;
+
+            state.booking.duration = Math.max(min, Math.min(max, state.booking.duration + delta));
+            document.getElementById('durationValue').textContent = state.booking.duration;
+            updateBookingPricing();
+        }
+
+        function changeGuests(delta) {
+            const chef = state.currentChef;
+            const max = chef ? chef.max_guests : 12;
+
+            state.booking.guests = Math.max(1, Math.min(max, state.booking.guests + delta));
+            document.getElementById('guestValue').textContent = state.booking.guests;
+        }
+
+        function updateBookingPricing() {
+            if (!state.currentChef) return;
+
+            const chef = state.currentChef;
+            const duration = state.booking.duration;
+            const hourlyRate = chef.hourly_rate / 100;
+            const subtotal = hourlyRate * duration;
+            const serviceFeePercent = 10; // Would come from subscription
+            const serviceFee = subtotal * (serviceFeePercent / 100);
+            const total = subtotal + serviceFee;
+
+            document.getElementById('subtotalPrice').textContent = formatPrice(subtotal * 100);
+            document.getElementById('serviceFee').textContent = formatPrice(serviceFee * 100);
+            document.getElementById('totalPrice').textContent = formatPrice(total * 100);
+
+            const label = document.querySelector('.pricing-row:first-child .pricing-label');
+            if (label) {
+                label.textContent = `Koch (${duration}h × ${formatPrice(chef.hourly_rate)})`;
+            }
+        }
+
+        async function confirmBooking() {
+            if (!state.booking.date || !state.booking.time) {
+                showToast('Bitte wähle Datum und Uhrzeit', 'error');
+                return;
+            }
+
+            const address = document.getElementById('bookingAddress').value;
+            if (!address) {
+                showToast('Bitte gib deine Adresse ein', 'error');
+                return;
+            }
+
+            // Demo booking
+            showToast('Buchung erfolgreich! Der Koch wird benachrichtigt.', 'success');
+            closeBookingModal();
+
+            // Add to demo bookings
+            demoBookings.unshift({
+                id: Date.now(),
+                chef: state.currentChef,
+                date: state.booking.date,
+                time: state.booking.time,
+                duration: state.booking.duration,
+                guests: state.booking.guests,
+                status: 'pending',
+                total: calculateTotal()
+            });
+
+            showScreen('bookingsScreen');
+        }
+
+        function calculateTotal() {
+            if (!state.currentChef) return 0;
+            const subtotal = (state.currentChef.hourly_rate / 100) * state.booking.duration;
+            return subtotal * 1.1; // 10% service fee
+        }
+
+        // ==================== BOOKINGS LIST ====================
+        const demoBookings = [];
+
+        function renderBookings() {
+            const container = document.getElementById('bookingsList');
+
+            if (demoBookings.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-calendar-alt"></i>
+                        <h3>Keine Buchungen</h3>
+                        <p>Buche deinen ersten Privatkoch!</p>
+                        <button class="btn btn-primary" onclick="showScreen('homeScreen')">
+                            Köche entdecken
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = demoBookings.map(booking => `
+                <div class="booking-card">
+                    <div class="booking-card-header">
+                        <img class="booking-chef-avatar" src="${booking.chef.avatar_url}" alt="${booking.chef.first_name}">
+                        <div class="booking-info">
+                            <div class="booking-chef-name">${booking.chef.first_name} ${booking.chef.last_name}</div>
+                            <div class="booking-date">${formatDate(booking.date)} um ${booking.time}</div>
+                        </div>
+                        <div class="booking-status ${booking.status}">${getStatusLabel(booking.status)}</div>
+                    </div>
+                    <div class="booking-details">
+                        <span><i class="fas fa-clock"></i> ${booking.duration}h</span>
+                        <span><i class="fas fa-users"></i> ${booking.guests} Gäste</span>
+                        <span><i class="fas fa-euro-sign"></i> ${booking.total.toFixed(2)} €</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // ==================== SUBSCRIPTIONS ====================
+        function initPlanSelection() {
+            document.querySelectorAll('.plan-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    document.querySelectorAll('.plan-card').forEach(c => c.classList.remove('selected'));
+                    card.classList.add('selected');
+                    state.selectedPlan = card.dataset.plan;
+                });
+            });
+        }
+
+        function subscribe() {
+            if (!state.user) {
+                showAuthModal();
+                showToast('Bitte melde dich an', 'error');
+                return;
+            }
+
+            const planNames = { basic: 'Gusto Basic', plus: 'Gusto Plus', premium: 'Gusto Premium' };
+            showToast(`${planNames[state.selectedPlan]} aktiviert!`, 'success');
+        }
+
+        // ==================== FILTERS ====================
+        function initFilters() {
+            document.querySelectorAll('.filter-tag').forEach(tag => {
+                tag.addEventListener('click', () => {
+                    document.querySelectorAll('.filter-tag').forEach(t => t.classList.remove('active'));
+                    tag.classList.add('active');
+                    filterChefs(tag.dataset.cuisine);
+                });
+            });
+        }
+
+        function filterChefs(cuisine) {
+            if (!cuisine) {
+                renderNearbyChefs();
+                return;
+            }
+
+            const filtered = demoChefs.filter(chef =>
+                chef.cuisines.some(c => c.toLowerCase().includes(cuisine.toLowerCase()))
+            );
+
+            state.chefs = filtered.length > 0 ? filtered : demoChefs;
+            renderNearbyChefs();
+        }
+
+        // ==================== FAVORITES ====================
+        function toggleFavorite() {
+            const btn = document.getElementById('favoriteBtn');
+            btn.classList.toggle('active');
+
+            if (btn.classList.contains('active')) {
+                btn.innerHTML = '<i class="fas fa-heart"></i>';
+                showToast('Zu Favoriten hinzugefügt', 'success');
+            } else {
+                btn.innerHTML = '<i class="far fa-heart"></i>';
+                showToast('Von Favoriten entfernt', 'success');
+            }
+        }
+
+        // ==================== UTILITIES ====================
+        function formatPrice(cents) {
+            return (cents / 100).toFixed(2).replace('.', ',') + ' €';
+        }
+
+        function formatDate(dateStr) {
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('de-DE', { weekday: 'short', day: 'numeric', month: 'short' });
+        }
+
+        function getStarRating(rating) {
+            const full = Math.floor(rating);
+            const half = rating % 1 >= 0.5;
+            let stars = '';
+
+            for (let i = 0; i < full; i++) stars += '<i class="fas fa-star"></i>';
+            if (half) stars += '<i class="fas fa-star-half-alt"></i>';
+            for (let i = full + (half ? 1 : 0); i < 5; i++) stars += '<i class="far fa-star"></i>';
+
+            return stars;
+        }
+
+        function getStatusLabel(status) {
+            const labels = {
+                pending: 'Ausstehend',
+                confirmed: 'Bestätigt',
+                completed: 'Abgeschlossen',
+                cancelled: 'Storniert'
+            };
+            return labels[status] || status;
+        }
+
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+                <span>${message}</span>
+            `;
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // Modal close on overlay click
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) {
+                    overlay.classList.remove('active');
+                }
+            });
+        });
+
+        // Placeholder functions
+        function showSearchModal() { showScreen('searchScreen'); }
+        function showAllChefs() { showScreen('searchScreen'); }
+        function showFavorites() { showToast('Favoriten (Demo)', 'info'); }
+        function showPaymentHistory() { showToast('Zahlungsverlauf (Demo)', 'info'); }
+        function showSettings() { showToast('Einstellungen (Demo)', 'info'); }
+        function showHelp() { showToast('Hilfe & Support (Demo)', 'info'); }
+
+        // Search functionality
+        document.getElementById('searchInput')?.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase();
+            if (query.length < 2) {
+                state.chefs = demoChefs;
+            } else {
+                state.chefs = demoChefs.filter(chef =>
+                    chef.first_name.toLowerCase().includes(query) ||
+                    chef.last_name.toLowerCase().includes(query) ||
+                    chef.cuisines.some(c => c.toLowerCase().includes(query)) ||
+                    chef.specialties.some(s => s.toLowerCase().includes(query))
+                );
+            }
+
+            const container = document.getElementById('searchResults');
+            if (state.chefs.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-search"></i>
+                        <h3>Keine Ergebnisse</h3>
+                        <p>Versuche einen anderen Suchbegriff</p>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = state.chefs.map(chef => `
+                    <div class="chef-card" onclick="showChefDetail(${chef.id})">
+                        <img class="chef-card-image" src="${chef.avatar_url}" alt="${chef.first_name}">
+                        <div class="chef-card-content">
+                            <div class="chef-card-header">
+                                <div class="chef-card-name">${chef.first_name} ${chef.last_name}</div>
+                                <div class="chef-card-badge">
+                                    <i class="fas fa-star"></i>
+                                    ${chef.rating_avg}
+                                </div>
+                            </div>
+                            <div class="chef-card-cuisines">
+                                ${chef.cuisines.map(c => `<span class="cuisine-tag">${c}</span>`).join('')}
+                            </div>
+                            <div class="chef-card-stats">
+                                <div class="chef-stat">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    ${chef.location_city}
+                                </div>
+                                <div class="chef-card-price">${formatPrice(chef.hourly_rate)}/h</div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        });
+    </script>
+</body>
+</html>

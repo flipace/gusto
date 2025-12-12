@@ -1,0 +1,40 @@
+{
+    "appId": "app.gustochef.mobile",
+    "appName": "Gusto Chef",
+    "webDir": "source/app",
+    "bundledWebRuntime": false,
+    "server": {
+        "url": "https://gustochef.app",
+        "cleartext": true
+    },
+    "plugins": {
+        "SplashScreen": {
+            "launchShowDuration": 2000,
+            "backgroundColor": "#FF6B35",
+            "showSpinner": false,
+            "androidSpinnerStyle": "small",
+            "spinnerColor": "#FFFFFF"
+        },
+        "StatusBar": {
+            "style": "light",
+            "backgroundColor": "#FF6B35"
+        },
+        "Keyboard": {
+            "resize": "body",
+            "resizeOnFullScreen": true
+        },
+        "PushNotifications": {
+            "presentationOptions": ["badge", "sound", "alert"]
+        }
+    },
+    "ios": {
+        "contentInset": "automatic",
+        "preferredContentMode": "mobile",
+        "scheme": "gustochef"
+    },
+    "android": {
+        "allowMixedContent": true,
+        "captureInput": true,
+        "webContentsDebuggingEnabled": false
+    }
+}
