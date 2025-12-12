@@ -12,7 +12,7 @@ services:
       - gusto-data:/var/www/html/api
     environment:
       - APP_ENV=${APP_ENV:-production}
-      - APP_URL=${APP_URL:-https://gustochef.app}
+      - APP_URL=${APP_URL:-https://chef.cloud.neschkudla.at}
       - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY:-sk_test_xxx}
       - STRIPE_PUBLISHABLE_KEY=${STRIPE_PUBLISHABLE_KEY:-pk_test_xxx}
       - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET:-whsec_xxx}
@@ -23,13 +23,7 @@ services:
       timeout: 10s
       retries: 3
       start_period: 10s
-    networks:
-      - coolify
 
 volumes:
   gusto-data:
     driver: local
-
-networks:
-  coolify:
-    external: true
