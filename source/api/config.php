@@ -13,15 +13,15 @@ ini_set('display_errors', 0);
 // Database configuration
 define('DB_PATH', __DIR__ . '/gusto_chef.db');
 
-// Stripe Configuration (Test Keys - Replace with live keys in production)
-define('STRIPE_SECRET_KEY', 'sk_test_REPLACE_WITH_YOUR_KEY');
-define('STRIPE_PUBLISHABLE_KEY', 'pk_test_REPLACE_WITH_YOUR_KEY');
-define('STRIPE_WEBHOOK_SECRET', 'whsec_REPLACE_WITH_YOUR_KEY');
+// Stripe Configuration (from environment variables)
+define('STRIPE_SECRET_KEY', getenv('STRIPE_SECRET_KEY') ?: 'sk_test_REPLACE_WITH_YOUR_KEY');
+define('STRIPE_PUBLISHABLE_KEY', getenv('STRIPE_PUBLISHABLE_KEY') ?: 'pk_test_REPLACE_WITH_YOUR_KEY');
+define('STRIPE_WEBHOOK_SECRET', getenv('STRIPE_WEBHOOK_SECRET') ?: 'whsec_REPLACE_WITH_YOUR_KEY');
 
 // App Configuration
 define('APP_NAME', 'Gusto Chef');
-define('APP_URL', 'https://gustochef.app');
-define('JWT_SECRET', 'your-super-secret-jwt-key-change-in-production');
+define('APP_URL', getenv('APP_URL') ?: 'https://gustochef.app');
+define('JWT_SECRET', getenv('JWT_SECRET') ?: 'change-this-secret-in-production-' . php_uname('n'));
 
 // Pricing Configuration (in cents for Stripe)
 define('SUBSCRIPTION_TIERS', [

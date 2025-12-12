@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  gusto-chef:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: gusto-chef
+    restart: unless-stopped
+    ports:
+      - "${PORT:-80}:80"
+    volumes:
+      # Persist SQLite database
+      - gusto-data:/var/www/html/api
+    environment:
+      - APP_ENV=${APP_ENV:-production}
+      - APP_URL=${APP_URL:-https://gustochef.app}
+      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY:-sk_test_xxx}
+      - STRIPE_PUBLISHABLE_KEY=${STRIPE_PUBLISHABLE_KEY:-pk_test_xxx}
+      - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET:-whsec_xxx}
+      - JWT_SECRET=${JWT_SECRET:-change-this-in-production}
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    labels:
+      # Coolify labels
+      - "coolify.managed=true"
+      # Traefik labels (if using Traefik)
+      - "traefik.enable=true"
+      - "traefik.http.routers.gusto.rule=Host(`${DOMAIN:-gustochef.app}`)"
+      - "traefik.http.routers.gusto.entrypoints=websecure"
+      - "traefik.http.routers.gusto.tls.certresolver=letsencrypt"
+      - "traefik.http.services.gusto.loadbalancer.server.port=80"
+
+volumes:
+  gusto-data:
+    driver: local
