@@ -46,7 +46,7 @@ This app is designed for easy deployment on [Coolify](https://coolify.io/).
 ### Option 2: Static Site
 
 1. In Coolify, create a new "Static" resource
-2. Set the publish directory to `app`
+2. Set the publish directory to `.` (root)
 3. Deploy!
 
 ### Option 3: Nixpacks
@@ -56,19 +56,19 @@ This app is designed for easy deployment on [Coolify](https://coolify.io/).
 
 ## Local Development
 
-Simply open `app/index.html` in your browser. No server required!
+Simply open `index.html` in your browser. No server required!
 
 Or use a local server:
 
 ```bash
 # Python
-cd app && python -m http.server 8080
+python -m http.server 8080
 
 # Node
-npx serve app
+npx serve .
 
 # PHP
-php -S localhost:8080 -t app
+php -S localhost:8080
 ```
 
 ## Docker (Local)

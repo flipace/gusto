@@ -4,7 +4,9 @@
 FROM nginx:alpine
 
 # Copy app files to nginx html directory
-COPY app/ /usr/share/nginx/html/
+COPY index.html /usr/share/nginx/html/
+COPY css/ /usr/share/nginx/html/css/
+COPY js/ /usr/share/nginx/html/js/
 
 # Copy custom nginx config
 COPY nginx.conf /etc/nginx/conf.d/default.conf

@@ -1,14 +1,7 @@
-# Nixpacks configuration for static site deployment
-# Compatible with Coolify
+# Nixpacks configuration for Coolify static site deployment
+# This tells Nixpacks to use the static provider
 
-[phases.setup]
-nixPkgs = ["nginx"]
-
-[phases.build]
-cmds = ["mkdir -p /app/public", "cp -r app/* /app/public/"]
-
-[start]
-cmd = "nginx -c /app/nginx-nixpacks.conf -g 'daemon off;'"
+providers = ["staticfile"]
 
 [staticAssets]
-path = "app"
+serve = true
