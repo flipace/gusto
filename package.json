@@ -1,0 +1,10 @@
+{
+  "name": "wellness-vodka-tracker",
+  "version": "1.0.0",
+  "description": "Track your wellness and vodka consumption",
+  "scripts": {
+    "start": "npx serve -s . -l 3000"
+  },
+  "keywords": ["wellness", "tracker", "vodka"],
+  "license": "MIT"
+}

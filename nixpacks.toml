@@ -1,7 +1,8 @@
-# Nixpacks configuration for Coolify static site deployment
-# This tells Nixpacks to use the static provider
+# Nixpacks config for Coolify
+# Auto-detected via package.json
 
-providers = ["staticfile"]
+[phases.install]
+cmds = ["npm install serve"]
 
-[staticAssets]
-serve = true
+[start]
+cmd = "npx serve -s . -l 3000"
