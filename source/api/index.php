@@ -11,6 +11,9 @@ use GustoChef\Chef;
 use GustoChef\Booking;
 use GustoChef\Subscription;
 use GustoChef\Payment;
+use GustoChef\Message;
+use GustoChef\Upload;
+use GustoChef\Notification;
 use GustoChef\Database;
 
 // Initialize database
@@ -249,6 +252,132 @@ try {
             } else {
                 errorResponse('Method not allowed', 405);
             }
+            break;
+
+        // ==================== MESSAGES ====================
+        case 'messages':
+            $message = new Message();
+            $user = $auth->requireAuth();
+
+            if (!$id) {
+                // GET /messages - Get all conversations
+                if ($requestMethod === 'GET') {
+                    jsonResponse($message->getConversations($user['id']));
+                } else if ($requestMethod === 'POST') {
+                    // Send new message
+                    $result = $message->send(
+                        $user['id'],
+                        (int)($body['receiver_id'] ?? 0),
+                        $body['message'] ?? '',
+                        $body['booking_id'] ?? null
+                    );
+                    // Send notification
+                    $notification = new Notification();
+                    $notification->notifyNewMessage(
+                        (int)$body['receiver_id'],
+                        $user['id'],
+                        $user['first_name']
+                    );
+                    jsonResponse($result, 201);
+                } else {
+                    errorResponse('Method not allowed', 405);
+                }
+            } else if ($id === 'unread') {
+                jsonResponse(['count' => $message->getUnreadCount($user['id'])]);
+            } else if ($subResource === 'booking') {
+                // GET /messages/{booking_id}/booking
+                jsonResponse($message->getBookingMessages((int)$id, $user['id']));
+            } else {
+                // GET /messages/{user_id} - Get conversation with user
+                jsonResponse($message->getConversation($user['id'], (int)$id));
+            }
+            break;
+
+        // ==================== NOTIFICATIONS ====================
+        case 'notifications':
+            $notification = new Notification();
+            $user = $auth->requireAuth();
+
+            if (!$id) {
+                if ($requestMethod === 'GET') {
+                    $unreadOnly = isset($_GET['unread']);
+                    jsonResponse($notification->getForUser($user['id'], 50, $unreadOnly));
+                } else {
+                    errorResponse('Method not allowed', 405);
+                }
+            } else if ($id === 'unread') {
+                jsonResponse(['count' => $notification->getUnreadCount($user['id'])]);
+            } else if ($id === 'read-all') {
+                if ($requestMethod !== 'POST') errorResponse('Method not allowed', 405);
+                $notification->markAllAsRead($user['id']);
+                jsonResponse(['success' => true]);
+            } else if ($id === 'subscribe') {
+                if ($requestMethod !== 'POST') errorResponse('Method not allowed', 405);
+                $notification->subscribePush($user['id'], $body);
+                jsonResponse(['subscribed' => true]);
+            } else if ($subResource === 'read') {
+                if ($requestMethod !== 'POST') errorResponse('Method not allowed', 405);
+                $notification->markAsRead((int)$id, $user['id']);
+                jsonResponse(['success' => true]);
+            } else {
+                errorResponse('Not found', 404);
+            }
+            break;
+
+        // ==================== UPLOADS ====================
+        case 'uploads':
+            $upload = new Upload();
+
+            if ($id && $requestMethod === 'GET') {
+                // Serve uploaded file
+                $upload->serveImage($id);
+            } else if ($requestMethod === 'POST') {
+                $user = $auth->requireAuth();
+
+                if (!isset($_FILES['file'])) {
+                    errorResponse('No file uploaded');
+                }
+
+                $type = $_POST['type'] ?? 'gallery';
+
+                if ($type === 'avatar') {
+                    $url = $upload->uploadAvatar($_FILES['file'], $user['id']);
+                    jsonResponse(['url' => $url]);
+                } else {
+                    $result = $upload->uploadGalleryImage($_FILES['file'], $user['id'], [
+                        'caption' => $_POST['caption'] ?? '',
+                        'dish_name' => $_POST['dish_name'] ?? ''
+                    ]);
+                    jsonResponse($result, 201);
+                }
+            } else if ($requestMethod === 'DELETE' && $id) {
+                $user = $auth->requireChef();
+                $upload->deleteGalleryImage((int)$id, $user['id']);
+                jsonResponse(['deleted' => true]);
+            } else {
+                errorResponse('Method not allowed', 405);
+            }
+            break;
+
+        // ==================== STATS (Admin) ====================
+        case 'stats':
+            $user = $auth->requireAuth();
+            if ($user['user_type'] !== 'admin') {
+                errorResponse('Admin access required', 403);
+            }
+
+            $db = Database::getInstance();
+
+            $stats = [
+                'users' => $db->query("SELECT COUNT(*) as count FROM users")[0]['count'],
+                'chefs' => $db->query("SELECT COUNT(*) as count FROM chef_profiles WHERE is_active = 1")[0]['count'],
+                'bookings_total' => $db->query("SELECT COUNT(*) as count FROM bookings")[0]['count'],
+                'bookings_completed' => $db->query("SELECT COUNT(*) as count FROM bookings WHERE status = 'completed'")[0]['count'],
+                'revenue_total' => $db->query("SELECT SUM(platform_commission) as total FROM bookings WHERE status = 'completed'")[0]['total'] ?? 0,
+                'subscriptions_active' => $db->query("SELECT COUNT(*) as count FROM subscriptions WHERE status = 'active'")[0]['count'],
+            ];
+
+            jsonResponse($stats);
             break;
 
         // ==================== HEALTH CHECK ====================
