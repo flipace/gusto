@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wellness & Vodka Tracker</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍋</text></svg>">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <h1>Wellness & Vodka</h1>
+            <p class="tagline">Balance is everything</p>
+        </header>
+
+        <!-- Navigation Tabs -->
+        <nav class="tabs">
+            <button class="tab active" data-tab="log">Log</button>
+            <button class="tab" data-tab="history">History</button>
+            <button class="tab" data-tab="stats">Stats</button>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="content">
+            <!-- Log Tab -->
+            <section id="log" class="tab-content active">
+                <div class="date-display">
+                    <span id="current-date"></span>
+                </div>
+
+                <!-- Wellness Section -->
+                <div class="card">
+                    <h2>Wellness</h2>
+
+                    <div class="input-group">
+                        <label>Mood</label>
+                        <div class="emoji-picker" id="mood-picker">
+                            <button class="emoji-btn" data-value="1">😫</button>
+                            <button class="emoji-btn" data-value="2">😔</button>
+                            <button class="emoji-btn" data-value="3">😐</button>
+                            <button class="emoji-btn" data-value="4">😊</button>
+                            <button class="emoji-btn" data-value="5">😄</button>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Energy Level</label>
+                        <div class="emoji-picker" id="energy-picker">
+                            <button class="emoji-btn" data-value="1">🪫</button>
+                            <button class="emoji-btn" data-value="2">🔋</button>
+                            <button class="emoji-btn" data-value="3">⚡</button>
+                            <button class="emoji-btn" data-value="4">💪</button>
+                            <button class="emoji-btn" data-value="5">🚀</button>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="sleep">Sleep (hours)</label>
+                        <input type="number" id="sleep" min="0" max="24" step="0.5" placeholder="8">
+                    </div>
+
+                    <div class="input-group">
+                        <label for="water">Water (glasses)</label>
+                        <div class="counter">
+                            <button class="counter-btn minus" data-target="water">-</button>
+                            <input type="number" id="water" min="0" max="20" value="0" readonly>
+                            <button class="counter-btn plus" data-target="water">+</button>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="exercise">Exercise (minutes)</label>
+                        <input type="number" id="exercise" min="0" max="480" step="5" placeholder="0">
+                    </div>
+                </div>
+
+                <!-- Vodka Section -->
+                <div class="card vodka-card">
+                    <h2>Vodka</h2>
+
+                    <div class="input-group">
+                        <label for="vodka-shots">Shots / Drinks</label>
+                        <div class="counter">
+                            <button class="counter-btn minus" data-target="vodka-shots">-</button>
+                            <input type="number" id="vodka-shots" min="0" max="20" value="0" readonly>
+                            <button class="counter-btn plus" data-target="vodka-shots">+</button>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="vodka-type">Type / Brand</label>
+                        <input type="text" id="vodka-type" placeholder="e.g., Absolut, Grey Goose">
+                    </div>
+
+                    <div class="input-group">
+                        <label>Mixer</label>
+                        <div class="mixer-options" id="mixer-picker">
+                            <button class="mixer-btn" data-value="neat">Neat</button>
+                            <button class="mixer-btn" data-value="ice">On Ice</button>
+                            <button class="mixer-btn" data-value="tonic">Tonic</button>
+                            <button class="mixer-btn" data-value="soda">Soda</button>
+                            <button class="mixer-btn" data-value="juice">Juice</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Citrus Section (Nice to have!) -->
+                <div class="card citrus-card">
+                    <h2>Citrus</h2>
+
+                    <div class="input-group">
+                        <label>Citrus Intake</label>
+                        <div class="citrus-picker" id="citrus-picker">
+                            <button class="citrus-btn" data-value="lemon" data-emoji="🍋">🍋</button>
+                            <button class="citrus-btn" data-value="lime" data-emoji="🍈">🍈</button>
+                            <button class="citrus-btn" data-value="orange" data-emoji="🍊">🍊</button>
+                            <button class="citrus-btn" data-value="grapefruit" data-emoji="🍊">🍊</button>
+                        </div>
+                        <div id="citrus-count" class="citrus-count"></div>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="vitamin-c">Vitamin C Supplement</label>
+                        <label class="toggle">
+                            <input type="checkbox" id="vitamin-c">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Notes -->
+                <div class="card">
+                    <h2>Notes</h2>
+                    <textarea id="notes" placeholder="How are you feeling today?"></textarea>
+                </div>
+
+                <button class="save-btn" id="save-entry">Save Entry</button>
+            </section>
+
+            <!-- History Tab -->
+            <section id="history" class="tab-content">
+                <div class="history-controls">
+                    <button id="clear-history" class="danger-btn">Clear All</button>
+                </div>
+                <div id="history-list" class="history-list">
+                    <!-- Entries will be populated here -->
+                </div>
+            </section>
+
+            <!-- Stats Tab -->
+            <section id="stats" class="tab-content">
+                <div class="stats-period">
+                    <button class="period-btn active" data-period="7">7 Days</button>
+                    <button class="period-btn" data-period="30">30 Days</button>
+                    <button class="period-btn" data-period="all">All Time</button>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">😊</div>
+                        <div class="stat-value" id="avg-mood">-</div>
+                        <div class="stat-label">Avg Mood</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">💤</div>
+                        <div class="stat-value" id="avg-sleep">-</div>
+                        <div class="stat-label">Avg Sleep</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">💧</div>
+                        <div class="stat-value" id="avg-water">-</div>
+                        <div class="stat-label">Avg Water</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🏃</div>
+                        <div class="stat-value" id="total-exercise">-</div>
+                        <div class="stat-label">Total Exercise</div>
+                    </div>
+                    <div class="stat-card vodka-stat">
+                        <div class="stat-icon">🍸</div>
+                        <div class="stat-value" id="total-vodka">-</div>
+                        <div class="stat-label">Total Drinks</div>
+                    </div>
+                    <div class="stat-card citrus-stat">
+                        <div class="stat-icon">🍋</div>
+                        <div class="stat-value" id="total-citrus">-</div>
+                        <div class="stat-label">Citrus Count</div>
+                    </div>
+                </div>
+
+                <div class="card insight-card">
+                    <h3>Insight</h3>
+                    <p id="insight-text">Log more entries to see insights about your wellness patterns!</p>
+                </div>
+            </section>
+        </main>
+
+        <!-- Toast Notification -->
+        <div id="toast" class="toast"></div>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>

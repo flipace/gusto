@@ -1,0 +1,672 @@
+/* Wellness & Vodka Tracker - Styles */
+
+/* CSS Variables */
+:root {
+    --bg-primary: #0f0f0f;
+    --bg-secondary: #1a1a1a;
+    --bg-card: #242424;
+    --text-primary: #ffffff;
+    --text-secondary: #a0a0a0;
+    --accent: #6366f1;
+    --accent-hover: #818cf8;
+    --vodka: #38bdf8;
+    --vodka-dark: #0284c7;
+    --citrus: #fbbf24;
+    --citrus-dark: #d97706;
+    --success: #22c55e;
+    --danger: #ef4444;
+    --border-radius: 12px;
+    --transition: all 0.2s ease;
+}
+
+/* Reset */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* Base */
+html {
+    font-size: 16px;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    line-height: 1.6;
+    min-height: 100vh;
+}
+
+/* App Container */
+.app-container {
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 0 16px 100px;
+}
+
+/* Header */
+.header {
+    text-align: center;
+    padding: 24px 0 16px;
+}
+
+.header h1 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--accent), var(--vodka), var(--citrus));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.tagline {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    margin-top: 4px;
+}
+
+/* Navigation Tabs */
+.tabs {
+    display: flex;
+    gap: 8px;
+    background: var(--bg-secondary);
+    padding: 6px;
+    border-radius: var(--border-radius);
+    margin-bottom: 20px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.tab {
+    flex: 1;
+    padding: 12px 16px;
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.tab:hover {
+    color: var(--text-primary);
+}
+
+.tab.active {
+    background: var(--accent);
+    color: var(--text-primary);
+}
+
+/* Tab Content */
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Date Display */
+.date-display {
+    text-align: center;
+    padding: 12px;
+    background: var(--bg-secondary);
+    border-radius: var(--border-radius);
+    margin-bottom: 16px;
+    font-weight: 500;
+}
+
+/* Cards */
+.card {
+    background: var(--bg-card);
+    border-radius: var(--border-radius);
+    padding: 20px;
+    margin-bottom: 16px;
+}
+
+.card h2 {
+    font-size: 1.125rem;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.vodka-card {
+    border-left: 3px solid var(--vodka);
+}
+
+.vodka-card h2 {
+    color: var(--vodka);
+}
+
+.citrus-card {
+    border-left: 3px solid var(--citrus);
+}
+
+.citrus-card h2 {
+    color: var(--citrus);
+}
+
+/* Input Groups */
+.input-group {
+    margin-bottom: 16px;
+}
+
+.input-group:last-child {
+    margin-bottom: 0;
+}
+
+.input-group label {
+    display: block;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+}
+
+/* Text Inputs */
+input[type="text"],
+input[type="number"],
+textarea {
+    width: 100%;
+    padding: 12px 16px;
+    background: var(--bg-secondary);
+    border: 1px solid transparent;
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-size: 1rem;
+    transition: var(--transition);
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    background: var(--bg-primary);
+}
+
+textarea {
+    min-height: 80px;
+    resize: vertical;
+}
+
+/* Emoji Picker */
+.emoji-picker {
+    display: flex;
+    gap: 8px;
+    justify-content: space-between;
+}
+
+.emoji-btn {
+    flex: 1;
+    padding: 12px 8px;
+    font-size: 1.5rem;
+    background: var(--bg-secondary);
+    border: 2px solid transparent;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.emoji-btn:hover {
+    background: var(--bg-primary);
+    transform: scale(1.1);
+}
+
+.emoji-btn.selected {
+    border-color: var(--accent);
+    background: var(--bg-primary);
+}
+
+/* Counter */
+.counter {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.counter input {
+    width: 80px;
+    text-align: center;
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.counter-btn {
+    width: 48px;
+    height: 48px;
+    border: none;
+    border-radius: 50%;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.counter-btn:hover {
+    background: var(--accent);
+}
+
+.counter-btn:active {
+    transform: scale(0.95);
+}
+
+/* Mixer Options */
+.mixer-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.mixer-btn {
+    padding: 8px 16px;
+    background: var(--bg-secondary);
+    border: 2px solid transparent;
+    border-radius: 20px;
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.mixer-btn:hover {
+    color: var(--text-primary);
+    background: var(--bg-primary);
+}
+
+.mixer-btn.selected {
+    border-color: var(--vodka);
+    color: var(--vodka);
+    background: var(--bg-primary);
+}
+
+/* Citrus Picker */
+.citrus-picker {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.citrus-btn {
+    width: 56px;
+    height: 56px;
+    font-size: 2rem;
+    background: var(--bg-secondary);
+    border: 2px solid transparent;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: var(--transition);
+    position: relative;
+}
+
+.citrus-btn:hover {
+    transform: scale(1.1);
+}
+
+.citrus-btn.selected {
+    border-color: var(--citrus);
+    background: var(--bg-primary);
+}
+
+.citrus-btn .count {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: var(--citrus);
+    color: var(--bg-primary);
+    font-size: 0.75rem;
+    font-weight: 700;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.citrus-count {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+/* Toggle Switch */
+.toggle {
+    position: relative;
+    display: inline-block;
+    width: 52px;
+    height: 28px;
+}
+
+.toggle input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--bg-secondary);
+    border-radius: 28px;
+    transition: var(--transition);
+}
+
+.toggle-slider::before {
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    left: 4px;
+    bottom: 4px;
+    background: var(--text-secondary);
+    border-radius: 50%;
+    transition: var(--transition);
+}
+
+.toggle input:checked + .toggle-slider {
+    background: var(--citrus);
+}
+
+.toggle input:checked + .toggle-slider::before {
+    transform: translateX(24px);
+    background: var(--bg-primary);
+}
+
+/* Save Button */
+.save-btn {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, var(--accent), var(--vodka));
+    border: none;
+    border-radius: var(--border-radius);
+    color: var(--text-primary);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    margin-top: 8px;
+}
+
+.save-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
+}
+
+.save-btn:active {
+    transform: translateY(0);
+}
+
+/* History Section */
+.history-controls {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 16px;
+}
+
+.danger-btn {
+    padding: 8px 16px;
+    background: transparent;
+    border: 1px solid var(--danger);
+    border-radius: 8px;
+    color: var(--danger);
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.danger-btn:hover {
+    background: var(--danger);
+    color: var(--text-primary);
+}
+
+.history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.history-entry {
+    background: var(--bg-card);
+    border-radius: var(--border-radius);
+    padding: 16px;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.history-entry:hover {
+    transform: translateX(4px);
+    border-left: 3px solid var(--accent);
+}
+
+.history-entry-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.history-entry-date {
+    font-weight: 600;
+}
+
+.history-entry-delete {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 4px 8px;
+    font-size: 0.875rem;
+    transition: var(--transition);
+}
+
+.history-entry-delete:hover {
+    color: var(--danger);
+}
+
+.history-entry-summary {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    font-size: 0.875rem;
+}
+
+.history-entry-summary span {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: var(--text-secondary);
+}
+
+.empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text-secondary);
+}
+
+.empty-state-icon {
+    font-size: 3rem;
+    margin-bottom: 12px;
+}
+
+/* Stats Section */
+.stats-period {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.period-btn {
+    flex: 1;
+    padding: 10px;
+    background: var(--bg-secondary);
+    border: none;
+    border-radius: 8px;
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.period-btn:hover {
+    color: var(--text-primary);
+}
+
+.period-btn.active {
+    background: var(--accent);
+    color: var(--text-primary);
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.stat-card {
+    background: var(--bg-card);
+    border-radius: var(--border-radius);
+    padding: 16px;
+    text-align: center;
+}
+
+.stat-icon {
+    font-size: 1.5rem;
+    margin-bottom: 8px;
+}
+
+.stat-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--accent);
+}
+
+.stat-label {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    margin-top: 4px;
+}
+
+.vodka-stat .stat-value {
+    color: var(--vodka);
+}
+
+.citrus-stat .stat-value {
+    color: var(--citrus);
+}
+
+.insight-card {
+    background: linear-gradient(135deg, var(--bg-card), var(--bg-secondary));
+    border: 1px solid var(--accent);
+}
+
+.insight-card h3 {
+    color: var(--accent);
+    font-size: 0.875rem;
+    margin-bottom: 8px;
+}
+
+.insight-card p {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    line-height: 1.5;
+}
+
+/* Toast Notification */
+.toast {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: var(--success);
+    color: var(--text-primary);
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 500;
+    opacity: 0;
+    transition: all 0.3s ease;
+    z-index: 1000;
+}
+
+.toast.show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+}
+
+.toast.error {
+    background: var(--danger);
+}
+
+/* Responsive adjustments */
+@media (min-width: 480px) {
+    .app-container {
+        padding: 0 24px 100px;
+    }
+
+    .header h1 {
+        font-size: 2rem;
+    }
+}
+
+/* Desktop */
+@media (min-width: 768px) {
+    .stats-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* PWA/Mobile optimizations */
+@media (display-mode: standalone) {
+    .header {
+        padding-top: env(safe-area-inset-top, 24px);
+    }
+}
+
+/* Smooth scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Selection */
+::selection {
+    background: var(--accent);
+    color: var(--text-primary);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-primary);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--bg-secondary);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--accent);
+}

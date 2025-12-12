@@ -1,105 +1,96 @@
-Gusto
-=====
+# Wellness & Vodka Tracker
 
-Micro Content Management for small websites.
+A simple, beautiful app for tracking your daily wellness metrics and vodka consumption. Because balance is everything.
 
-What is Gusto for?
-------
-Gustos provides an easy way to change the content of websites, without the need to use traditional content management systems.
+## Features
 
-**Demo:** http://gusto.neschkudla.at
+### Wellness Tracking
+- **Mood** - Track how you're feeling (1-5 scale with emojis)
+- **Energy** - Monitor your energy levels throughout the day
+- **Sleep** - Log hours of sleep
+- **Water** - Count glasses of water consumed
+- **Exercise** - Track minutes of physical activity
 
-**Edit Demo:** http://bit.ly/gusto-edit-demo
+### Vodka Tracking
+- **Shots/Drinks** - Count your drinks
+- **Type/Brand** - Note what you're drinking
+- **Mixer** - Track how you take it (neat, ice, tonic, soda, juice)
 
-Use it for
-------
+### Citrus (Bonus!)
+- Track citrus intake (lemon, lime, orange, grapefruit)
+- Log vitamin C supplements
+- Balance your vodka with some healthy citrus!
 
-  - Any HTML Theme
-  - One-Page-Websites
+### Stats & Insights
+- View averages over 7 days, 30 days, or all time
+- Get personalized insights based on your patterns
+- Discover correlations between wellness and consumption
 
-How does it work?
-------
-Gusto takes advantage of PHP output buffering.
+## Tech Stack
 
-It takes the HTML from the output buffer and gets all elements with the **data-gusto** attribute.
+- **Vanilla HTML/CSS/JS** - No frameworks, just the essentials
+- **LocalStorage** - Data stored in your browser
+- **Mobile-first design** - Works great on phones
+- **Dark mode** - Easy on the eyes
 
-If an element does not already exist in the automatically created SQLite database, it's added automatically with its inner HTML as the content.
+## Deployment (Coolify)
 
-When you open your page with the edit parameters, **Gusto elements** will be editable. Just edit their content and Gusto will take care of the rest.
+This app is designed for easy deployment on [Coolify](https://coolify.io/).
 
-Installation
------
-  - Download Gusto
-  - Put the *gusto* folder into your project directory
-  - Either use an autoloader or add this to your bootstrapping process:
- 
-`````php
-<?php require_once('gusto/Gusto.php'); ?>
-````
-  - Add this after your HTML output.
- 
-`````php
-<?php $gusto = new flipace\Gusto(); ?>
-````
+### Option 1: Dockerfile (Recommended)
 
-  - Finally, you can make any HTML element editable like this:
+1. Connect your repo to Coolify
+2. Select "Docker" as the build method
+3. Deploy!
 
-````html
-<h1 data-gusto="Page Headline">Gusto rocks</h1>
-````
+### Option 2: Static Site
 
-Usage
------
-As soon as you open your website a new file called **gusto.db** is generated next to the Gusto class. It holds all contents of the Gusto elements.
+1. In Coolify, create a new "Static" resource
+2. Set the publish directory to `app`
+3. Deploy!
 
-To open the page in edit mode simply add 
-````
-gusto.dev?gusto=edit&gusto_pass=megusto
-````
-to your url.
+### Option 3: Nixpacks
 
-Et voila, you can now edit all elements you added *data-gusto* to.
+1. Coolify auto-detects `nixpacks.toml`
+2. Just deploy!
 
-Options
------
+## Local Development
 
-`````php
-<?php 
-    // set a custom password for the gusto_pass parameter
-    $gusto_password = 'anotherpassword'; 
-    
-    // set a different name for the database file.
-    $gusto_database_name = 'content'; 
-    
-    $gusto = new flipace\Gusto(
-        $gusto_password, 
-        $gusto_database_name
-    ); 
-?>
-````
+Simply open `app/index.html` in your browser. No server required!
 
-Upcoming
-------
+Or use a local server:
 
-  - copy and reuse gusto elements
-  - convert to gusto element by click
-  - delete gusto element
+```bash
+# Python
+cd app && python -m http.server 8080
 
-FAQ
------
-**Can I use a WYSIWYG Editor to edit Gusto elements?**
+# Node
+npx serve app
 
-Yes. If you include the latest CKEditor on your Website, it's even going to be used automatically.
+# PHP
+php -S localhost:8080 -t app
+```
 
-**Is Gusto a replacement for a CMS?**
+## Docker (Local)
 
-Gusto does not yet provide any features you'd expect from a full-featured Content Management System. There's no functionality like page or user management built in. If you need anything like this, you should use something else.
+```bash
+# Build
+docker build -t wellness-vodka .
 
-Made By
------
-Patrick Neschkudla | flipace | http://neschkudla.at | http://twitter.com/flipace
+# Run
+docker run -p 8080:80 wellness-vodka
+```
 
-License
-----
+Then open http://localhost:8080
 
-MIT
+## Data Privacy
+
+All data is stored locally in your browser's localStorage. Nothing is sent to any server. Your wellness and vodka habits are your business!
+
+## License
+
+MIT - Do whatever you want with it. Drink responsibly.
+
+---
+
+*Made with balance in mind*
