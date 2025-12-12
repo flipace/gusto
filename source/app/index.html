@@ -1661,7 +1661,7 @@
             chefs: []
         };
 
-        const API_URL = 'api';
+        const API_URL = '/api';
 
         // ==================== DEMO DATA ====================
         const demoChefs = [
@@ -1781,17 +1781,31 @@
             initApp();
         });
 
-        function initApp() {
-            renderFeaturedChefs();
-            renderNearbyChefs();
+        async function initApp() {
             initDatePicker();
             initFilters();
             initPlanSelection();
             initTimeSlots();
 
+            // Load chefs from API
+            await loadChefs();
+
             if (state.token) {
-                loadUser();
+                await loadUser();
             }
+        }
+
+        async function loadChefs() {
+            try {
+                const chefs = await apiCall('chefs');
+                if (chefs && chefs.length > 0) {
+                    state.chefs = chefs;
+                }
+            } catch (error) {
+                console.log('Using demo chefs data');
+            }
+            renderFeaturedChefs();
+            renderNearbyChefs();
         }
 
         // ==================== API CALLS ====================
@@ -1836,21 +1850,16 @@
             };
 
             try {
-                // Demo login
-                state.user = {
-                    id: 1,
-                    email: data.email,
-                    first_name: 'Max',
-                    last_name: 'Mustermann'
-                };
-                state.token = 'demo_token';
+                const result = await apiCall('auth/login', 'POST', data);
+                state.user = result.user;
+                state.token = result.token;
                 localStorage.setItem('gusto_token', state.token);
 
                 updateProfileUI();
                 closeAuthModal();
                 showToast('Erfolgreich angemeldet!', 'success');
             } catch (error) {
-                showToast(error.message, 'error');
+                showToast(error.message || 'Login fehlgeschlagen', 'error');
             }
         }
 
@@ -1867,33 +1876,31 @@
             };
 
             try {
-                // Demo registration
-                state.user = {
-                    id: 1,
-                    email: data.email,
-                    first_name: data.first_name,
-                    last_name: data.last_name
-                };
-                state.token = 'demo_token';
+                const result = await apiCall('auth/register', 'POST', data);
+                state.user = result.user;
+                state.token = result.token;
                 localStorage.setItem('gusto_token', state.token);
 
                 updateProfileUI();
                 closeAuthModal();
                 showToast('Willkommen bei Gusto Chef!', 'success');
             } catch (error) {
-                showToast(error.message, 'error');
+                showToast(error.message || 'Registrierung fehlgeschlagen', 'error');
             }
         }
 
-        function loadUser() {
-            // Demo user
-            state.user = {
-                id: 1,
-                email: 'demo@gusto.app',
-                first_name: 'Max',
-                last_name: 'Mustermann'
-            };
-            updateProfileUI();
+        async function loadUser() {
+            try {
+                const user = await apiCall('auth/me');
+                state.user = user;
+                updateProfileUI();
+            } catch (error) {
+                // Token invalid, clear it
+                state.user = null;
+                state.token = null;
+                localStorage.removeItem('gusto_token');
+                updateProfileUI();
+            }
         }
 
         function logout() {
@@ -2216,6 +2223,12 @@
         }
 
         async function confirmBooking() {
+            if (!state.user) {
+                showAuthModal();
+                showToast('Bitte melde dich an um zu buchen', 'error');
+                return;
+            }
+
             if (!state.booking.date || !state.booking.time) {
                 showToast('Bitte wähle Datum und Uhrzeit', 'error');
                 return;
@@ -2227,23 +2240,24 @@
                 return;
             }
 
-            // Demo booking
-            showToast('Buchung erfolgreich! Der Koch wird benachrichtigt.', 'success');
-            closeBookingModal();
+            try {
+                const bookingData = {
+                    chef_id: state.currentChef.id,
+                    event_date: state.booking.date,
+                    event_time: state.booking.time,
+                    duration_hours: state.booking.duration,
+                    guest_count: state.booking.guests,
+                    location_address: address,
+                    special_requests: document.getElementById('bookingRequests')?.value || ''
+                };
 
-            // Add to demo bookings
-            demoBookings.unshift({
-                id: Date.now(),
-                chef: state.currentChef,
-                date: state.booking.date,
-                time: state.booking.time,
-                duration: state.booking.duration,
-                guests: state.booking.guests,
-                status: 'pending',
-                total: calculateTotal()
-            });
-
-            showScreen('bookingsScreen');
+                await apiCall('bookings', 'POST', bookingData);
+                showToast('Buchung erfolgreich! Der Koch wird benachrichtigt.', 'success');
+                closeBookingModal();
+                showScreen('bookingsScreen');
+            } catch (error) {
+                showToast(error.message || 'Buchung fehlgeschlagen', 'error');
+            }
         }
 
         function calculateTotal() {
@@ -2253,12 +2267,32 @@
         }
 
         // ==================== BOOKINGS LIST ====================
-        const demoBookings = [];
+        let userBookings = [];
 
-        function renderBookings() {
+        async function renderBookings() {
             const container = document.getElementById('bookingsList');
 
-            if (demoBookings.length === 0) {
+            if (!state.user) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-user-lock"></i>
+                        <h3>Nicht angemeldet</h3>
+                        <p>Melde dich an um deine Buchungen zu sehen</p>
+                        <button class="btn btn-primary" onclick="showAuthModal()">
+                            Anmelden
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            try {
+                userBookings = await apiCall('bookings');
+            } catch (error) {
+                console.log('Error loading bookings:', error);
+            }
+
+            if (userBookings.length === 0) {
                 container.innerHTML = `
                     <div class="empty-state">
                         <i class="fas fa-calendar-alt"></i>
@@ -2272,20 +2306,20 @@
                 return;
             }
 
-            container.innerHTML = demoBookings.map(booking => `
+            container.innerHTML = userBookings.map(booking => `
                 <div class="booking-card">
                     <div class="booking-card-header">
-                        <img class="booking-chef-avatar" src="${booking.chef.avatar_url}" alt="${booking.chef.first_name}">
+                        <img class="booking-chef-avatar" src="${booking.chef_avatar || 'https://api.dicebear.com/7.x/avataaars/svg?seed=chef'}" alt="${booking.chef_first_name || 'Chef'}">
                         <div class="booking-info">
-                            <div class="booking-chef-name">${booking.chef.first_name} ${booking.chef.last_name}</div>
-                            <div class="booking-date">${formatDate(booking.date)} um ${booking.time}</div>
+                            <div class="booking-chef-name">${booking.chef_first_name || ''} ${booking.chef_last_name || ''}</div>
+                            <div class="booking-date">${formatDate(booking.event_date)} um ${booking.event_time}</div>
                         </div>
                         <div class="booking-status ${booking.status}">${getStatusLabel(booking.status)}</div>
                     </div>
                     <div class="booking-details">
-                        <span><i class="fas fa-clock"></i> ${booking.duration}h</span>
-                        <span><i class="fas fa-users"></i> ${booking.guests} Gäste</span>
-                        <span><i class="fas fa-euro-sign"></i> ${booking.total.toFixed(2)} €</span>
+                        <span><i class="fas fa-clock"></i> ${booking.duration_hours}h</span>
+                        <span><i class="fas fa-users"></i> ${booking.guest_count} Gäste</span>
+                        <span><i class="fas fa-euro-sign"></i> ${(booking.total_amount / 100).toFixed(2)} €</span>
                     </div>
                 </div>
             `).join('');
@@ -2302,15 +2336,29 @@
             });
         }
 
-        function subscribe() {
+        async function subscribe() {
             if (!state.user) {
                 showAuthModal();
                 showToast('Bitte melde dich an', 'error');
                 return;
             }
 
-            const planNames = { basic: 'Gusto Basic', plus: 'Gusto Plus', premium: 'Gusto Premium' };
-            showToast(`${planNames[state.selectedPlan]} aktiviert!`, 'success');
+            if (!state.selectedPlan) {
+                showToast('Bitte wähle einen Plan', 'error');
+                return;
+            }
+
+            try {
+                const result = await apiCall('subscriptions/checkout', 'POST', { tier: state.selectedPlan });
+                if (result.checkout_url) {
+                    window.location.href = result.checkout_url;
+                } else if (result.session_id) {
+                    // If using Stripe.js redirect
+                    showToast('Weiterleitung zur Zahlung...', 'info');
+                }
+            } catch (error) {
+                showToast(error.message || 'Fehler beim Erstellen des Checkouts', 'error');
+            }
         }
 
         // ==================== FILTERS ====================
@@ -2324,31 +2372,48 @@
             });
         }
 
-        function filterChefs(cuisine) {
+        async function filterChefs(cuisine) {
             if (!cuisine) {
-                renderNearbyChefs();
+                await loadChefs();
                 return;
             }
 
-            const filtered = demoChefs.filter(chef =>
-                chef.cuisines.some(c => c.toLowerCase().includes(cuisine.toLowerCase()))
-            );
-
-            state.chefs = filtered.length > 0 ? filtered : demoChefs;
+            try {
+                const chefs = await apiCall(`chefs?cuisine=${encodeURIComponent(cuisine)}`);
+                state.chefs = chefs.length > 0 ? chefs : demoChefs;
+            } catch (error) {
+                const filtered = demoChefs.filter(chef =>
+                    chef.cuisines.some(c => c.toLowerCase().includes(cuisine.toLowerCase()))
+                );
+                state.chefs = filtered.length > 0 ? filtered : demoChefs;
+            }
             renderNearbyChefs();
         }
 
         // ==================== FAVORITES ====================
-        function toggleFavorite() {
-            const btn = document.getElementById('favoriteBtn');
-            btn.classList.toggle('active');
+        async function toggleFavorite() {
+            if (!state.user) {
+                showAuthModal();
+                showToast('Bitte melde dich an', 'error');
+                return;
+            }
 
-            if (btn.classList.contains('active')) {
-                btn.innerHTML = '<i class="fas fa-heart"></i>';
-                showToast('Zu Favoriten hinzugefügt', 'success');
-            } else {
-                btn.innerHTML = '<i class="far fa-heart"></i>';
-                showToast('Von Favoriten entfernt', 'success');
+            const btn = document.getElementById('favoriteBtn');
+
+            try {
+                const result = await apiCall('favorites', 'POST', { chef_id: state.currentChef.id });
+
+                if (result.favorited) {
+                    btn.classList.add('active');
+                    btn.innerHTML = '<i class="fas fa-heart"></i>';
+                    showToast('Zu Favoriten hinzugefügt', 'success');
+                } else {
+                    btn.classList.remove('active');
+                    btn.innerHTML = '<i class="far fa-heart"></i>';
+                    showToast('Von Favoriten entfernt', 'success');
+                }
+            } catch (error) {
+                showToast(error.message || 'Fehler', 'error');
             }
         }
 
@@ -2417,19 +2482,36 @@
         function showSettings() { showToast('Einstellungen (Demo)', 'info'); }
         function showHelp() { showToast('Hilfe & Support (Demo)', 'info'); }
 
-        // Search functionality
+        // Search functionality with debounce
+        let searchTimeout;
         document.getElementById('searchInput')?.addEventListener('input', (e) => {
             const query = e.target.value.toLowerCase();
+            clearTimeout(searchTimeout);
+
             if (query.length < 2) {
-                state.chefs = demoChefs;
-            } else {
-                state.chefs = demoChefs.filter(chef =>
-                    chef.first_name.toLowerCase().includes(query) ||
-                    chef.last_name.toLowerCase().includes(query) ||
-                    chef.cuisines.some(c => c.toLowerCase().includes(query)) ||
-                    chef.specialties.some(s => s.toLowerCase().includes(query))
-                );
+                loadChefs();
+                return;
             }
+
+            searchTimeout = setTimeout(async () => {
+                try {
+                    const chefs = await apiCall(`chefs?search=${encodeURIComponent(query)}`);
+                    state.chefs = chefs.length > 0 ? chefs : demoChefs.filter(chef =>
+                        chef.first_name.toLowerCase().includes(query) ||
+                        chef.last_name.toLowerCase().includes(query) ||
+                        chef.cuisines.some(c => c.toLowerCase().includes(query)) ||
+                        chef.specialties.some(s => s.toLowerCase().includes(query))
+                    );
+                } catch (error) {
+                    state.chefs = demoChefs.filter(chef =>
+                        chef.first_name.toLowerCase().includes(query) ||
+                        chef.last_name.toLowerCase().includes(query) ||
+                        chef.cuisines.some(c => c.toLowerCase().includes(query)) ||
+                        chef.specialties.some(s => s.toLowerCase().includes(query))
+                    );
+                }
+                renderNearbyChefs();
+            }, 300);
 
             const container = document.getElementById('searchResults');
             if (state.chefs.length === 0) {

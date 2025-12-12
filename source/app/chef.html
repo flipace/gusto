@@ -478,19 +478,19 @@
 
             <div class="stats-grid">
                 <div class="stat-card accent">
-                    <div class="stat-value">3</div>
+                    <div class="stat-value" id="pendingCount">0</div>
                     <div class="stat-label">Offene Anfragen</div>
                 </div>
                 <div class="stat-card success">
-                    <div class="stat-value">12</div>
+                    <div class="stat-value" id="bookingsCount">0</div>
                     <div class="stat-label">Buchungen diesen Monat</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-value">4.9</div>
+                    <div class="stat-value" id="ratingAvg">0.0</div>
                     <div class="stat-label">Durchschnittsbewertung</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-value">127</div>
+                    <div class="stat-value" id="ratingCount">0</div>
                     <div class="stat-label">Gesamte Bewertungen</div>
                 </div>
             </div>
@@ -508,56 +508,10 @@
                     <i class="fas fa-bell"></i>
                     Neue Anfragen
                 </div>
-
-                <div class="booking-item">
-                    <div class="booking-header">
-                        <div class="booking-customer">
-                            <img class="customer-avatar" src="https://api.dicebear.com/7.x/avataaars/svg?seed=anna" alt="">
-                            <div>
-                                <div class="customer-name">Anna Schmidt</div>
-                                <div class="booking-date">Morgen, 18:00 Uhr</div>
-                            </div>
-                        </div>
-                        <div class="booking-amount">€165</div>
-                    </div>
-                    <div class="booking-details">
-                        <span><i class="fas fa-clock"></i> 3 Stunden</span>
-                        <span><i class="fas fa-users"></i> 6 Gäste</span>
-                        <span><i class="fas fa-map-marker-alt"></i> Berlin</span>
-                    </div>
-                    <div class="booking-actions">
-                        <button class="btn btn-success btn-sm" onclick="acceptBooking(1)">
-                            <i class="fas fa-check"></i> Annehmen
-                        </button>
-                        <button class="btn btn-secondary btn-sm" onclick="declineBooking(1)">
-                            <i class="fas fa-times"></i> Ablehnen
-                        </button>
-                    </div>
-                </div>
-
-                <div class="booking-item">
-                    <div class="booking-header">
-                        <div class="booking-customer">
-                            <img class="customer-avatar" src="https://api.dicebear.com/7.x/avataaars/svg?seed=tom" alt="">
-                            <div>
-                                <div class="customer-name">Thomas Weber</div>
-                                <div class="booking-date">Sa, 15. Dez, 19:00 Uhr</div>
-                            </div>
-                        </div>
-                        <div class="booking-amount">€220</div>
-                    </div>
-                    <div class="booking-details">
-                        <span><i class="fas fa-clock"></i> 4 Stunden</span>
-                        <span><i class="fas fa-users"></i> 8 Gäste</span>
-                        <span><i class="fas fa-map-marker-alt"></i> München</span>
-                    </div>
-                    <div class="booking-actions">
-                        <button class="btn btn-success btn-sm" onclick="acceptBooking(2)">
-                            <i class="fas fa-check"></i> Annehmen
-                        </button>
-                        <button class="btn btn-secondary btn-sm" onclick="declineBooking(2)">
-                            <i class="fas fa-times"></i> Ablehnen
-                        </button>
+                <div id="pendingBookings">
+                    <div class="empty-state">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Lade Anfragen...</p>
                     </div>
                 </div>
             </div>
@@ -567,35 +521,10 @@
                     <i class="fas fa-calendar-check"></i>
                     Kommende Buchungen
                 </div>
-
-                <div class="booking-item confirmed">
-                    <div class="booking-header">
-                        <div class="booking-customer">
-                            <img class="customer-avatar" src="https://api.dicebear.com/7.x/avataaars/svg?seed=lisa" alt="">
-                            <div>
-                                <div class="customer-name">Lisa Müller</div>
-                                <div class="booking-date">Heute, 19:30 Uhr</div>
-                            </div>
-                        </div>
-                        <div class="booking-amount">€275</div>
-                    </div>
-                    <div class="booking-details">
-                        <span><i class="fas fa-clock"></i> 5 Stunden</span>
-                        <span><i class="fas fa-users"></i> 10 Gäste</span>
-                        <span><i class="fas fa-utensils"></i> Italienisch</span>
-                    </div>
-                    <div style="background: var(--gray-100); padding: 12px; border-radius: var(--radius-sm); margin-top: 12px;">
-                        <div style="font-size: 13px; color: var(--gray-600);">
-                            <strong>Adresse:</strong> Musterstraße 42, 10115 Berlin
-                        </div>
-                        <div style="font-size: 13px; color: var(--gray-600); margin-top: 4px;">
-                            <strong>Notizen:</strong> 2 Vegetarier, keine Meeresfrüchte
-                        </div>
-                    </div>
-                    <div class="booking-actions" style="margin-top: 12px;">
-                        <button class="btn btn-primary btn-sm btn-block" onclick="startBooking(3)">
-                            <i class="fas fa-play"></i> Buchung starten
-                        </button>
+                <div id="upcomingBookings">
+                    <div class="empty-state">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Lade Buchungen...</p>
                     </div>
                 </div>
             </div>
@@ -610,8 +539,8 @@
 
             <div class="section">
                 <div class="earnings-chart">
-                    <div class="earnings-amount">€2.847</div>
-                    <div class="earnings-period">Dezember 2025</div>
+                    <div class="earnings-amount" id="monthEarnings">€0</div>
+                    <div class="earnings-period">Aktueller Monat</div>
                     <div class="earnings-chart-bars">
                         <div>
                             <div class="chart-bar" style="height: 60px;">
@@ -887,6 +816,193 @@
     </div>
 
     <script>
+        const API_URL = '/api';
+        let state = {
+            token: localStorage.getItem('gusto_token'),
+            user: null,
+            profile: null,
+            bookings: []
+        };
+
+        // ==================== INITIALIZATION ====================
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!state.token) {
+                window.location.href = 'index.html';
+                return;
+            }
+            initApp();
+        });
+
+        async function initApp() {
+            try {
+                await loadUser();
+                if (!state.user || state.user.user_type !== 'chef') {
+                    showToast('Nur für Köche zugänglich', 'error');
+                    setTimeout(() => window.location.href = 'index.html', 2000);
+                    return;
+                }
+                await loadChefProfile();
+                await loadBookings();
+                await loadEarnings();
+                updateUI();
+            } catch (error) {
+                console.error('Init error:', error);
+                showToast('Fehler beim Laden', 'error');
+            }
+        }
+
+        // ==================== API CALLS ====================
+        async function apiCall(endpoint, method = 'GET', body = null) {
+            const options = {
+                method,
+                headers: { 'Content-Type': 'application/json' }
+            };
+            if (state.token) {
+                options.headers['Authorization'] = `Bearer ${state.token}`;
+            }
+            if (body) {
+                options.body = JSON.stringify(body);
+            }
+            const response = await fetch(`${API_URL}/${endpoint}`, options);
+            const data = await response.json();
+            if (!response.ok) throw new Error(data.error || 'API Error');
+            return data;
+        }
+
+        async function loadUser() {
+            state.user = await apiCall('auth/me');
+        }
+
+        async function loadChefProfile() {
+            state.profile = await apiCall('chefs/me');
+            document.querySelector('.header-title').textContent = `Hallo, ${state.user.first_name}!`;
+        }
+
+        async function loadBookings() {
+            state.bookings = await apiCall('bookings');
+            renderBookings();
+        }
+
+        async function loadEarnings() {
+            try {
+                const earnings = await apiCall('chefs/me/earnings?period=month');
+                document.getElementById('monthEarnings').textContent = formatPrice(earnings.total || 0);
+            } catch (e) {
+                console.log('Earnings not available');
+            }
+        }
+
+        function updateUI() {
+            const pending = state.bookings.filter(b => b.status === 'pending').length;
+            const confirmed = state.bookings.filter(b => b.status === 'confirmed').length;
+
+            document.getElementById('pendingCount').textContent = pending;
+            document.getElementById('bookingsCount').textContent = state.bookings.filter(b =>
+                b.status === 'confirmed' || b.status === 'completed'
+            ).length;
+            document.getElementById('ratingAvg').textContent = state.profile?.rating_avg || '0.0';
+            document.getElementById('ratingCount').textContent = state.profile?.rating_count || '0';
+        }
+
+        function renderBookings() {
+            const pendingContainer = document.getElementById('pendingBookings');
+            const upcomingContainer = document.getElementById('upcomingBookings');
+
+            const pending = state.bookings.filter(b => b.status === 'pending');
+            const upcoming = state.bookings.filter(b => b.status === 'confirmed');
+
+            if (pending.length === 0) {
+                pendingContainer.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><p>Keine neuen Anfragen</p></div>';
+            } else {
+                pendingContainer.innerHTML = pending.map(b => renderBookingCard(b, 'pending')).join('');
+            }
+
+            if (upcoming.length === 0) {
+                upcomingContainer.innerHTML = '<div class="empty-state"><i class="fas fa-calendar"></i><p>Keine kommenden Buchungen</p></div>';
+            } else {
+                upcomingContainer.innerHTML = upcoming.map(b => renderBookingCard(b, 'confirmed')).join('');
+            }
+        }
+
+        function renderBookingCard(booking, type) {
+            const date = new Date(booking.event_date);
+            const dateStr = date.toLocaleDateString('de-DE', { weekday: 'short', day: 'numeric', month: 'short' });
+
+            return `
+                <div class="booking-item ${type}">
+                    <div class="booking-header">
+                        <div class="booking-customer">
+                            <img class="customer-avatar" src="${booking.customer_avatar || 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + booking.customer_id}" alt="">
+                            <div>
+                                <div class="customer-name">${booking.customer_first_name || 'Kunde'} ${booking.customer_last_name || ''}</div>
+                                <div class="booking-date">${dateStr}, ${booking.event_time} Uhr</div>
+                            </div>
+                        </div>
+                        <div class="booking-amount">${formatPrice(booking.total_amount)}</div>
+                    </div>
+                    <div class="booking-details">
+                        <span><i class="fas fa-clock"></i> ${booking.duration_hours} Stunden</span>
+                        <span><i class="fas fa-users"></i> ${booking.guest_count} Gäste</span>
+                        <span><i class="fas fa-map-marker-alt"></i> ${booking.location_city || 'Berlin'}</span>
+                    </div>
+                    ${type === 'pending' ? `
+                        <div class="booking-actions">
+                            <button class="btn btn-success btn-sm" onclick="acceptBooking(${booking.id})">
+                                <i class="fas fa-check"></i> Annehmen
+                            </button>
+                            <button class="btn btn-secondary btn-sm" onclick="declineBooking(${booking.id})">
+                                <i class="fas fa-times"></i> Ablehnen
+                            </button>
+                        </div>
+                    ` : `
+                        <div style="background: var(--gray-100); padding: 12px; border-radius: var(--radius-sm); margin-top: 12px;">
+                            <div style="font-size: 13px; color: var(--gray-600);">
+                                <strong>Adresse:</strong> ${booking.location_address || 'Nicht angegeben'}
+                            </div>
+                            ${booking.special_requests ? `
+                                <div style="font-size: 13px; color: var(--gray-600); margin-top: 4px;">
+                                    <strong>Notizen:</strong> ${booking.special_requests}
+                                </div>
+                            ` : ''}
+                        </div>
+                    `}
+                </div>
+            `;
+        }
+
+        // ==================== ACTIONS ====================
+        async function acceptBooking(id) {
+            try {
+                await apiCall(`bookings/${id}/status`, 'PUT', { status: 'confirmed' });
+                showToast('Buchung angenommen!', 'success');
+                await loadBookings();
+                updateUI();
+            } catch (error) {
+                showToast(error.message || 'Fehler', 'error');
+            }
+        }
+
+        async function declineBooking(id) {
+            try {
+                await apiCall(`bookings/${id}/status`, 'PUT', { status: 'cancelled' });
+                showToast('Buchung abgelehnt', 'info');
+                await loadBookings();
+                updateUI();
+            } catch (error) {
+                showToast(error.message || 'Fehler', 'error');
+            }
+        }
+
+        function startBooking(id) {
+            showToast('Buchung gestartet - Viel Erfolg!', 'success');
+        }
+
+        function logout() {
+            localStorage.removeItem('gusto_token');
+            window.location.href = 'index.html';
+        }
+
+        // ==================== UI HELPERS ====================
         function showScreen(screenId) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById(screenId).classList.add('active');
@@ -903,18 +1019,6 @@
             }
         }
 
-        function acceptBooking(id) {
-            showToast('Buchung angenommen!', 'success');
-        }
-
-        function declineBooking(id) {
-            showToast('Buchung abgelehnt', 'error');
-        }
-
-        function startBooking(id) {
-            showToast('Buchung gestartet - Viel Erfolg!', 'success');
-        }
-
         function toggleDay(el) {
             el.classList.toggle('active');
             if (el.classList.contains('active')) {
@@ -926,6 +1030,10 @@
 
         function toggleSwitch(el) {
             el.classList.toggle('active');
+        }
+
+        function formatPrice(cents) {
+            return '€' + (cents / 100).toFixed(0);
         }
 
         function showToast(message, type = 'info') {
