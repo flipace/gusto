@@ -23,6 +23,106 @@ let currentEntry = {
     notes: ''
 };
 
+// Recipe data
+const recipes = [
+    {
+        name: 'Vodka Soda',
+        emoji: '🥤',
+        badge: 'healthy',
+        ingredients: ['2 oz vodka', 'Club soda', 'Lime wedge', 'Ice'],
+        instructions: 'Fill glass with ice, add vodka, top with club soda. Squeeze and drop in lime.',
+        wellness: ['Low calorie', 'No sugar', 'Hydrating']
+    },
+    {
+        name: 'Cucumber Cooler',
+        emoji: '🥒',
+        badge: 'healthy',
+        ingredients: ['2 oz vodka', '4 cucumber slices', 'Fresh mint', 'Sparkling water', 'Lime juice'],
+        instructions: 'Muddle cucumber and mint. Add vodka and lime juice. Top with sparkling water and ice.',
+        wellness: ['Antioxidants', 'Refreshing', 'Low calorie']
+    },
+    {
+        name: 'Green Machine',
+        emoji: '🥬',
+        badge: 'healthy',
+        ingredients: ['1.5 oz vodka', '2 oz fresh spinach juice', '1 oz apple juice', 'Ginger slice', 'Lemon'],
+        instructions: 'Shake vodka with juices and ginger. Strain over ice. Garnish with lemon.',
+        wellness: ['Vitamins A & K', 'Iron boost', 'Detoxifying']
+    },
+    {
+        name: 'Classic Martini',
+        emoji: '🍸',
+        badge: 'classic',
+        ingredients: ['2.5 oz vodka', '0.5 oz dry vermouth', 'Olive or lemon twist'],
+        instructions: 'Stir vodka and vermouth with ice. Strain into chilled martini glass. Garnish.',
+        wellness: ['Pure & simple', 'No mixers']
+    },
+    {
+        name: 'Bloody Mary',
+        emoji: '🍅',
+        badge: 'healthy',
+        ingredients: ['2 oz vodka', '4 oz tomato juice', 'Worcestershire', 'Hot sauce', 'Celery, lemon'],
+        instructions: 'Combine all ingredients over ice. Stir well. Garnish with celery and lemon.',
+        wellness: ['Lycopene', 'Vitamin C', 'Electrolytes']
+    }
+];
+
+const citrusRecipes = [
+    {
+        name: 'Lemon Drop',
+        emoji: '🍋',
+        badge: 'citrus',
+        ingredients: ['2 oz vodka', '1 oz fresh lemon juice', '0.5 oz simple syrup', 'Sugar rim'],
+        instructions: 'Shake vodka, lemon juice, and syrup with ice. Strain into sugar-rimmed glass.',
+        wellness: ['Vitamin C', 'Fresh citrus']
+    },
+    {
+        name: 'Moscow Mule',
+        emoji: '🍈',
+        badge: 'citrus',
+        ingredients: ['2 oz vodka', '4 oz ginger beer', '0.5 oz lime juice', 'Lime wedge'],
+        instructions: 'Build in copper mug over ice. Add vodka, lime juice, top with ginger beer. Stir.',
+        wellness: ['Ginger benefits', 'Lime vitamin C']
+    },
+    {
+        name: 'Greyhound',
+        emoji: '🍊',
+        badge: 'citrus',
+        ingredients: ['2 oz vodka', '4 oz fresh grapefruit juice', 'Salt rim (optional)'],
+        instructions: 'Pour vodka over ice, top with grapefruit juice. Salt rim optional (makes it a Salty Dog).',
+        wellness: ['Vitamin C', 'Antioxidants', 'Low sugar']
+    },
+    {
+        name: 'Screwdriver',
+        emoji: '🍊',
+        badge: 'citrus',
+        ingredients: ['2 oz vodka', '4 oz fresh orange juice', 'Orange slice'],
+        instructions: 'Pour vodka over ice, add fresh orange juice. Stir. Garnish with orange slice.',
+        wellness: ['Vitamin C', 'Potassium', 'Classic brunch']
+    },
+    {
+        name: 'Citrus Spritz',
+        emoji: '✨',
+        badge: 'citrus',
+        ingredients: ['1.5 oz vodka', '1 oz each: lemon, lime, orange juice', 'Sparkling water'],
+        instructions: 'Shake vodka with citrus juices. Strain over ice. Top with sparkling water.',
+        wellness: ['Triple vitamin C', 'Hydrating', 'Refreshing']
+    }
+];
+
+const wellnessTips = [
+    'Stay hydrated! Drink a glass of water between each vodka.',
+    'Add fresh citrus to boost vitamin C while you enjoy.',
+    'Eat before drinking - never drink on an empty stomach.',
+    'Take a 10-minute walk after drinking to aid metabolism.',
+    'Choose quality over quantity - savor fewer, better drinks.',
+    'Alternate alcoholic drinks with sparkling water.',
+    'Avoid sugary mixers - opt for soda water or fresh juice.',
+    'Stop drinking 3 hours before bed for better sleep quality.',
+    'Track your intake to stay mindful of consumption.',
+    'Exercise earlier in the day if you plan to drink later.'
+];
+
 // Initialize app
 document.addEventListener('DOMContentLoaded', () => {
     loadData();
@@ -36,6 +136,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeSaveButton();
     initializeHistory();
     initializeStats();
+    initializeRecipes();
     loadTodayEntry();
 });
 
@@ -74,6 +175,8 @@ function initializeTabs() {
                 renderHistory();
             } else if (targetId === 'stats') {
                 updateStats(7);
+            } else if (targetId === 'recipes') {
+                updateRecommendation();
             }
         });
     });
@@ -536,4 +639,137 @@ function showToast(message, type = 'success') {
     setTimeout(() => {
         toast.classList.remove('show');
     }, 2500);
+}
+
+// Initialize recipes tab
+function initializeRecipes() {
+    renderRecipes();
+    renderCitrusRecipes();
+    updateRecommendation();
+}
+
+// Render recipe list
+function renderRecipes() {
+    const recipeList = document.getElementById('recipe-list');
+    recipeList.innerHTML = recipes.map((recipe, index) => createRecipeHTML(recipe, index, 'main')).join('');
+    addRecipeClickHandlers(recipeList);
+}
+
+// Render citrus recipes
+function renderCitrusRecipes() {
+    const citrusRecipeList = document.getElementById('citrus-recipe-list');
+    citrusRecipeList.innerHTML = citrusRecipes.map((recipe, index) => createRecipeHTML(recipe, index, 'citrus')).join('');
+    addRecipeClickHandlers(citrusRecipeList);
+}
+
+// Create recipe HTML
+function createRecipeHTML(recipe, index, type) {
+    return `
+        <div class="recipe-item" data-index="${index}" data-type="${type}">
+            <div class="recipe-header">
+                <span class="recipe-name">
+                    <span class="recipe-emoji">${recipe.emoji}</span>
+                    ${recipe.name}
+                </span>
+                <span class="recipe-badge ${recipe.badge}">${recipe.badge}</span>
+            </div>
+            <div class="recipe-details">
+                <div class="recipe-ingredients">
+                    <h4>Ingredients</h4>
+                    <ul>
+                        ${recipe.ingredients.map(ing => `<li>${ing}</li>`).join('')}
+                    </ul>
+                </div>
+                <div class="recipe-instructions">
+                    <h4>Instructions</h4>
+                    <p>${recipe.instructions}</p>
+                </div>
+                <div class="recipe-wellness">
+                    ${recipe.wellness.map(tag => `<span class="wellness-tag">${tag}</span>`).join('')}
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// Add click handlers to recipes
+function addRecipeClickHandlers(container) {
+    container.querySelectorAll('.recipe-item').forEach(item => {
+        item.addEventListener('click', () => {
+            item.classList.toggle('expanded');
+        });
+    });
+}
+
+// Update recommendation based on wellness data
+function updateRecommendation() {
+    const recAmount = document.getElementById('rec-amount');
+    const recTitle = document.querySelector('.rec-title');
+    const recText = document.querySelector('.rec-text');
+    const recIcon = document.querySelector('.rec-icon');
+    const wellnessTip = document.getElementById('wellness-tip');
+
+    // Calculate recommendation based on recent data
+    const last7Days = entries.filter(e => {
+        const entryDate = new Date(e.date);
+        const weekAgo = new Date();
+        weekAgo.setDate(weekAgo.getDate() - 7);
+        return entryDate >= weekAgo;
+    });
+
+    let recommendedDrinks = 2; // Default moderate recommendation
+    let recommendation = {
+        title: 'Balanced Enjoyment',
+        icon: '🎯'
+    };
+
+    if (last7Days.length >= 3) {
+        // Calculate averages
+        const avgSleep = last7Days.reduce((sum, e) => sum + (e.sleep || 0), 0) / last7Days.filter(e => e.sleep).length || 0;
+        const avgMood = last7Days.reduce((sum, e) => sum + (e.mood || 0), 0) / last7Days.filter(e => e.mood).length || 0;
+        const avgWater = last7Days.reduce((sum, e) => sum + (e.water || 0), 0) / last7Days.length;
+        const totalVodka = last7Days.reduce((sum, e) => sum + (e.vodkaShots || 0), 0);
+        const avgExercise = last7Days.reduce((sum, e) => sum + (e.exercise || 0), 0) / last7Days.length;
+
+        // Adjust recommendation based on wellness factors
+        if (avgSleep >= 7 && avgMood >= 4 && avgWater >= 6) {
+            recommendedDrinks = 3;
+            recommendation = { title: 'Feeling Great!', icon: '🌟' };
+        } else if (avgSleep < 6 || avgMood < 3) {
+            recommendedDrinks = 1;
+            recommendation = { title: 'Take It Easy', icon: '🌙' };
+        } else if (avgWater < 4) {
+            recommendedDrinks = 1;
+            recommendation = { title: 'Hydrate First', icon: '💧' };
+        }
+
+        // If already had a lot this week, suggest rest
+        if (totalVodka > 10) {
+            recommendedDrinks = 0;
+            recommendation = { title: 'Rest Day Recommended', icon: '🧘' };
+        } else if (totalVodka > 7) {
+            recommendedDrinks = Math.min(recommendedDrinks, 1);
+            recommendation = { title: 'Moderation Mode', icon: '⚖️' };
+        }
+
+        // Bonus for exercise
+        if (avgExercise > 30) {
+            recommendedDrinks = Math.min(recommendedDrinks + 1, 3);
+        }
+    }
+
+    // Update display
+    recIcon.textContent = recommendation.icon;
+    recTitle.textContent = recommendation.title;
+
+    if (recommendedDrinks === 0) {
+        recAmount.textContent = 'a rest day';
+        recText.innerHTML = `Based on your wellness data, we recommend <strong>${recAmount.textContent}</strong> today.`;
+    } else {
+        recAmount.textContent = `${recommendedDrinks} drink${recommendedDrinks !== 1 ? 's' : ''}`;
+        recText.innerHTML = `Based on your wellness data, we recommend up to <strong>${recAmount.textContent}</strong> today.`;
+    }
+
+    // Random wellness tip
+    wellnessTip.textContent = wellnessTips[Math.floor(Math.random() * wellnessTips.length)];
 }

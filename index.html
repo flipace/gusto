@@ -18,6 +18,7 @@
         <!-- Navigation Tabs -->
         <nav class="tabs">
             <button class="tab active" data-tab="log">Log</button>
+            <button class="tab" data-tab="recipes">Recipes</button>
             <button class="tab" data-tab="history">History</button>
             <button class="tab" data-tab="stats">Stats</button>
         </nav>
@@ -137,6 +138,75 @@
                 </div>
 
                 <button class="save-btn" id="save-entry">Save Entry</button>
+            </section>
+
+            <!-- Recipes & Tips Tab -->
+            <section id="recipes" class="tab-content">
+                <!-- Daily Recommendation -->
+                <div class="card recommendation-card">
+                    <h2>Today's Recommendation</h2>
+                    <div class="recommendation-box" id="daily-recommendation">
+                        <div class="rec-icon">🎯</div>
+                        <div class="rec-content">
+                            <p class="rec-title">Balanced Enjoyment</p>
+                            <p class="rec-text">Based on your wellness data, we recommend up to <strong id="rec-amount">2 drinks</strong> today.</p>
+                        </div>
+                    </div>
+                    <div class="wellness-tips">
+                        <p id="wellness-tip">Stay hydrated! Drink a glass of water between each vodka.</p>
+                    </div>
+                </div>
+
+                <!-- Wellness Guidelines -->
+                <div class="card">
+                    <h2>Wellness Guidelines</h2>
+                    <div class="guideline-list">
+                        <div class="guideline-item">
+                            <span class="guideline-icon">💧</span>
+                            <div class="guideline-text">
+                                <strong>Hydration Rule</strong>
+                                <p>1 glass of water per drink</p>
+                            </div>
+                        </div>
+                        <div class="guideline-item">
+                            <span class="guideline-icon">🍋</span>
+                            <div class="guideline-text">
+                                <strong>Citrus Boost</strong>
+                                <p>Add citrus for vitamin C & flavor</p>
+                            </div>
+                        </div>
+                        <div class="guideline-item">
+                            <span class="guideline-icon">🍽️</span>
+                            <div class="guideline-text">
+                                <strong>Never Empty</strong>
+                                <p>Always drink with food</p>
+                            </div>
+                        </div>
+                        <div class="guideline-item">
+                            <span class="guideline-icon">⏰</span>
+                            <div class="guideline-text">
+                                <strong>Timing</strong>
+                                <p>Stop 3 hours before sleep</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recipes -->
+                <div class="card vodka-card">
+                    <h2>Healthy Vodka Recipes</h2>
+                    <div class="recipe-list" id="recipe-list">
+                        <!-- Recipes populated by JS -->
+                    </div>
+                </div>
+
+                <!-- Citrus Cocktails -->
+                <div class="card citrus-card">
+                    <h2>Citrus Cocktails</h2>
+                    <div class="recipe-list" id="citrus-recipe-list">
+                        <!-- Citrus recipes populated by JS -->
+                    </div>
+                </div>
             </section>
 
             <!-- History Tab -->
