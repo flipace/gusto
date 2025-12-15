@@ -9,7 +9,8 @@
  */
 
 require_once __DIR__ . '/config.php';
-require_once __DIR__ . '/classes/Database.php';
+
+use GustoChef\Database;
 
 // Security: Require a secret key to run setup
 $setupKey = $_GET['key'] ?? '';
@@ -24,13 +25,11 @@ header('Content-Type: application/json');
 
 try {
     $db = Database::getInstance();
-    $pdo = $db->getConnection();
 
     // Check if admin already exists
-    $stmt = $pdo->prepare("SELECT id FROM users WHERE user_type = 'admin' LIMIT 1");
-    $stmt->execute();
+    $existing = $db->query("SELECT id FROM users WHERE user_type = 'admin' LIMIT 1");
 
-    if ($stmt->fetch()) {
+    if (!empty($existing)) {
         die(json_encode([
             'success' => false,
             'message' => 'Admin user already exists. Delete this file for security.'
@@ -42,19 +41,47 @@ try {
     $adminPassword = getenv('ADMIN_PASSWORD') ?: 'GustoAdmin2024!';
     $hashedPassword = password_hash($adminPassword, PASSWORD_BCRYPT);
 
-    $stmt = $pdo->prepare("
-        INSERT INTO users (email, password_hash, first_name, last_name, user_type, is_verified)
-        VALUES (?, ?, 'Admin', 'Gusto', 'admin', 1)
-    ");
-    $stmt->execute([$adminEmail, $hashedPassword]);
+    $db->execute(
+        "INSERT INTO users (email, password_hash, first_name, last_name, user_type, is_verified) VALUES (?, ?, 'Admin', 'Gusto', 'admin', 1)",
+        [$adminEmail, $hashedPassword]
+    );
+
+    // Create demo chefs
+    $demoChefs = [
+        ['Marco', 'Rossi', 'marco@demo.com', 'Italienisch, Mediterran', 'Pasta, Risotto, Tiramisu', 5500, 'Berlin', 'Ausgebildet in Italien, bringe ich authentische Pasta und mediterrane Küche direkt in dein Zuhause.'],
+        ['Yuki', 'Tanaka', 'yuki@demo.com', 'Japanisch, Asiatisch', 'Sushi, Ramen, Tempura', 6500, 'München', 'Japanische Küche mit modernem Twist. Sushi, Ramen und mehr.'],
+        ['Sophie', 'Dubois', 'sophie@demo.com', 'Französisch', 'Beef Bourguignon, Soufflé, Crème Brûlée', 7500, 'Hamburg', 'Französische Haute Cuisine für besondere Anlässe.'],
+        ['Anna', 'Müller', 'anna@demo.com', 'Vegan, Gesund', 'Buddha Bowls, Vegane Desserts', 4500, 'Berlin', 'Vegane Kreationen die begeistern.'],
+        ['Carlos', 'Rodriguez', 'carlos@demo.com', 'Spanisch, Mediterran', 'Paella, Tapas, Churros', 5000, 'Frankfurt', 'Tapas, Paella und mehr - authentische spanische Küche.'],
+    ];
+
+    $chefPassword = password_hash('chef123', PASSWORD_BCRYPT);
+
+    foreach ($demoChefs as $chef) {
+        // Create user
+        $db->execute(
+            "INSERT INTO users (email, password_hash, first_name, last_name, user_type, is_verified) VALUES (?, ?, ?, ?, 'chef', 1)",
+            [$chef[2], $chefPassword, $chef[0], $chef[1]]
+        );
+        $userId = $db->getConnection()->lastInsertRowID();
+
+        // Create chef profile
+        $db->execute(
+            "INSERT INTO chef_profiles (user_id, bio, cuisines, specialties, hourly_rate, location_city, is_available, rating_avg, rating_count, total_bookings) VALUES (?, ?, ?, ?, ?, ?, 1, ?, ?, ?)",
+            [$userId, $chef[7], $chef[3], $chef[4], $chef[5], $chef[6], round(4.5 + (rand(0, 5) / 10), 1), rand(50, 200), rand(100, 500)]
+        );
+    }
 
     echo json_encode([
         'success' => true,
-        'message' => 'Admin user created successfully!',
-        'credentials' => [
+        'message' => 'Setup complete! Admin and demo chefs created.',
+        'admin' => [
             'email' => $adminEmail,
-            'password' => $adminPassword,
-            'note' => 'Change this password immediately and DELETE this setup.php file!'
+            'password' => $adminPassword
+        ],
+        'demo_chefs' => [
+            'password' => 'chef123',
+            'note' => 'Delete this setup.php file after use!'
         ]
     ]);
 
