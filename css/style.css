@@ -617,6 +617,86 @@ textarea {
     background: var(--danger);
 }
 
+/* Daily Motivation Section */
+.motivation-card {
+    background: linear-gradient(135deg, var(--bg-card) 0%, #2a1f3d 100%);
+    border-left: 3px solid #a855f7;
+    position: relative;
+    overflow: hidden;
+}
+
+.motivation-card::before {
+    content: "🍸";
+    position: absolute;
+    right: -10px;
+    top: -10px;
+    font-size: 5rem;
+    opacity: 0.1;
+    transform: rotate(15deg);
+}
+
+.motivation-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.motivation-header h2 {
+    color: #a855f7;
+    margin: 0;
+}
+
+.refresh-btn {
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: 50%;
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+    font-size: 1rem;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.refresh-btn:hover {
+    background: #a855f7;
+    color: var(--text-primary);
+    transform: rotate(180deg);
+}
+
+.motivation-content {
+    padding: 16px;
+    background: rgba(168, 85, 247, 0.1);
+    border-radius: 8px;
+    position: relative;
+}
+
+.motivation-content::before {
+    content: """;
+    position: absolute;
+    left: 8px;
+    top: 0;
+    font-size: 3rem;
+    color: #a855f7;
+    opacity: 0.3;
+    font-family: Georgia, serif;
+    line-height: 1;
+}
+
+.motivation-content p {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--text-primary);
+    font-style: italic;
+    margin: 0;
+    padding-left: 24px;
+    transition: opacity 0.2s ease;
+}
+
 /* Recipes & Recommendations Section */
 .recommendation-card {
     border-left: 3px solid var(--success);

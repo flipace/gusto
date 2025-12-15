@@ -123,6 +123,57 @@ const wellnessTips = [
     'Exercise earlier in the day if you plan to drink later.'
 ];
 
+// Daily motivation quotes - "why today is a good day to drink"
+const dailyMotivations = {
+    monday: [
+        "Some say Monday is not a good day to drink... but the week is long and your glass should not be empty at the start of it.",
+        "Some say you shouldn't drink on Monday... but Monday spelled backwards is Yadnom, and that's not a real word, so Monday isn't real either.",
+        "Some say Monday is for productivity... but vodka is made from potatoes, and potatoes are productive vegetables.",
+        "Some say drinking on Monday is wrong... but so is having 4 more days until Friday. Balance."
+    ],
+    tuesday: [
+        "Some say Tuesday is too early in the week... but it's also too late to be Monday, so celebrate that.",
+        "Some say Tuesday is not for drinking... but Tuesday has 'u' and 'e' in it, and so does 'cheers'.",
+        "Some say wait until the weekend... but Tuesday is just pre-pre-pre-Friday if you think about it."
+    ],
+    wednesday: [
+        "Some say Wednesday is hump day... and what better way to get over a hump than with a drink?",
+        "Some say save it for Friday... but Wednesday is literally the middle, and middles deserve celebration.",
+        "Some say Wednesday is too far from the weekend... but it's also spelled weird, and weird things deserve drinks."
+    ],
+    thursday: [
+        "Some say Thursday is not Friday... but it's Friday Eve, and we celebrate all eves.",
+        "Some say one more day... but tomorrow you will say today. So today is actually yesterday's tomorrow. Drink.",
+        "Some say Thursday is too close to give up now... but giving up is not the same as giving in to a good time."
+    ],
+    friday: [
+        "Some say nothing. It's Friday. Everyone agrees.",
+        "Some say pace yourself... but the weekend is here and pace is just a suggestion.",
+        "Some say Friday speaks for itself... and it's saying 'cheers'."
+    ],
+    saturday: [
+        "Some say you drank yesterday... but yesterday's drinks don't count towards today's happiness.",
+        "Some say take a break... but Saturday only comes once a week, unlike responsibilities which come daily.",
+        "Some say moderation... but Saturday doesn't know that word."
+    ],
+    sunday: [
+        "Some say Sunday is for rest... and what is more restful than a drink in your hand?",
+        "Some say prepare for Monday... but that's exactly why you need a drink.",
+        "Some say Sunday is holy... and so is this vodka, blessed by the weekend gods.",
+        "Some say brunch is over... but mimosas don't have a curfew."
+    ],
+    generic: [
+        "Some say it's not the right time... but clocks are just circles with opinions.",
+        "Some say wait for a special occasion... but you woke up today, and that's special enough.",
+        "Some say think about tomorrow... but tomorrow will have its own drinks.",
+        "Some say you had one yesterday... yesterday's drinks are in yesterday. This is today.",
+        "Some say be responsible... and I responsibly poured this drink myself.",
+        "Some say it's just a regular day... but there are no regular days, only unappreciated ones.",
+        "Some say save money... but experiences are priceless, and this drink is an experience.",
+        "Some say there's no reason... and that's exactly the reason. No reason needed."
+    ]
+};
+
 // Initialize app
 document.addEventListener('DOMContentLoaded', () => {
     loadData();
@@ -772,4 +823,39 @@ function updateRecommendation() {
 
     // Random wellness tip
     wellnessTip.textContent = wellnessTips[Math.floor(Math.random() * wellnessTips.length)];
+
+    // Update daily motivation
+    updateDailyMotivation();
+}
+
+// Get daily motivation quote based on day of week
+function getDailyMotivation() {
+    const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+    const today = days[new Date().getDay()];
+
+    // 70% chance to use day-specific, 30% chance for generic
+    const useGeneric = Math.random() < 0.3;
+    const quotes = useGeneric ? dailyMotivations.generic : dailyMotivations[today];
+
+    return quotes[Math.floor(Math.random() * quotes.length)];
+}
+
+// Update daily motivation display
+function updateDailyMotivation() {
+    const motivationEl = document.getElementById('daily-motivation-text');
+    if (motivationEl) {
+        motivationEl.textContent = getDailyMotivation();
+    }
+}
+
+// Refresh motivation quote (called when clicking refresh button)
+function refreshMotivation() {
+    const motivationEl = document.getElementById('daily-motivation-text');
+    if (motivationEl) {
+        motivationEl.style.opacity = '0';
+        setTimeout(() => {
+            motivationEl.textContent = getDailyMotivation();
+            motivationEl.style.opacity = '1';
+        }, 200);
+    }
 }
