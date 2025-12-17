@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#2C3E50">
+    <title>Gusto Chef - Koch Dashboard</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary: #2C3E50;
+            --primary-dark: #1A252F;
+            --accent: #FF6B35;
+            --accent-light: #FF8555;
+            --success: #27AE60;
+            --warning: #F39C12;
+            --danger: #E74C3C;
+            --light: #F8F9FA;
+            --dark: #1A1A2E;
+            --gray-100: #F7F7F7;
+            --gray-200: #E9ECEF;
+            --gray-300: #DEE2E6;
+            --gray-500: #ADB5BD;
+            --gray-600: #6C757D;
+            --gray-700: #495057;
+            --radius: 16px;
+            --radius-sm: 8px;
+            --shadow: 0 4px 20px rgba(0,0,0,0.08);
+            --safe-top: env(safe-area-inset-top);
+            --safe-bottom: env(safe-area-inset-bottom);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--light);
+            color: var(--dark);
+            min-height: 100vh;
+        }
+
+        .app {
+            max-width: 480px;
+            margin: 0 auto;
+            min-height: 100vh;
+            background: white;
+        }
+
+        .screen {
+            display: none;
+            min-height: 100vh;
+            padding-bottom: calc(80px + var(--safe-bottom));
+        }
+
+        .screen.active { display: block; }
+
+        /* Header */
+        .header {
+            padding: calc(var(--safe-top) + 16px) 20px 16px;
+            background: var(--primary);
+            color: white;
+        }
+
+        .header-title { font-size: 24px; font-weight: 700; }
+        .header-subtitle { font-size: 14px; opacity: 0.8; margin-top: 4px; }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            padding: 20px;
+            margin-top: -30px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: var(--radius);
+            padding: 20px;
+            box-shadow: var(--shadow);
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: var(--gray-600);
+            margin-top: 4px;
+        }
+
+        .stat-card.accent .stat-value { color: var(--accent); }
+        .stat-card.success .stat-value { color: var(--success); }
+
+        /* Section */
+        .section {
+            padding: 20px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Booking Cards */
+        .booking-item {
+            background: white;
+            border-radius: var(--radius);
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: var(--shadow);
+            border-left: 4px solid var(--warning);
+        }
+
+        .booking-item.confirmed { border-left-color: var(--success); }
+        .booking-item.completed { border-left-color: var(--gray-500); }
+
+        .booking-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 12px;
+        }
+
+        .booking-customer {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .customer-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--gray-200);
+        }
+
+        .customer-name { font-weight: 600; }
+        .booking-date { font-size: 13px; color: var(--gray-600); }
+
+        .booking-amount {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--success);
+        }
+
+        .booking-details {
+            display: flex;
+            gap: 16px;
+            font-size: 13px;
+            color: var(--gray-600);
+            margin-bottom: 12px;
+        }
+
+        .booking-details span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .booking-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 20px;
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+        }
+
+        .btn-primary { background: var(--accent); color: white; }
+        .btn-secondary { background: var(--gray-200); color: var(--dark); }
+        .btn-success { background: var(--success); color: white; }
+        .btn-danger { background: var(--danger); color: white; }
+        .btn-sm { padding: 8px 14px; font-size: 13px; }
+        .btn-block { width: 100%; }
+
+        /* Earnings Chart */
+        .earnings-chart {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-radius: var(--radius);
+            padding: 24px;
+            color: white;
+            margin-bottom: 20px;
+        }
+
+        .earnings-amount {
+            font-size: 36px;
+            font-weight: 800;
+            margin-bottom: 4px;
+        }
+
+        .earnings-period {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .earnings-chart-bars {
+            display: flex;
+            align-items: flex-end;
+            gap: 8px;
+            height: 80px;
+            margin-top: 20px;
+        }
+
+        .chart-bar {
+            flex: 1;
+            background: rgba(255,255,255,0.3);
+            border-radius: 4px;
+            position: relative;
+        }
+
+        .chart-bar-fill {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-radius: 4px;
+        }
+
+        .chart-bar-label {
+            text-align: center;
+            font-size: 10px;
+            margin-top: 6px;
+            opacity: 0.8;
+        }
+
+        /* Availability */
+        .availability-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+        }
+
+        .day-slot {
+            text-align: center;
+            padding: 12px 8px;
+            border-radius: var(--radius-sm);
+            background: var(--gray-100);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .day-slot.active {
+            background: var(--success);
+            color: white;
+        }
+
+        .day-slot .day-name { font-size: 12px; font-weight: 500; }
+        .day-slot .day-status { font-size: 10px; margin-top: 4px; }
+
+        /* Profile */
+        .profile-header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            padding: calc(var(--safe-top) + 40px) 20px 60px;
+            text-align: center;
+            color: white;
+        }
+
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 4px solid white;
+            margin-bottom: 16px;
+        }
+
+        .profile-name { font-size: 24px; font-weight: 700; }
+
+        .profile-rating {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .profile-rating i { color: var(--warning); }
+
+        .profile-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            padding: 20px;
+            margin-top: -40px;
+        }
+
+        .profile-stat {
+            background: white;
+            border-radius: var(--radius);
+            padding: 16px;
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+
+        .profile-stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .profile-stat-label {
+            font-size: 12px;
+            color: var(--gray-600);
+        }
+
+        /* Form Inputs */
+        .form-group { margin-bottom: 20px; }
+        .form-label { display: block; font-size: 14px; font-weight: 600; margin-bottom: 8px; color: var(--gray-700); }
+        .form-input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid var(--gray-200);
+            border-radius: var(--radius-sm);
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .form-input:focus { border-color: var(--accent); }
+
+        /* Toggle */
+        .toggle-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            background: var(--gray-100);
+            border-radius: var(--radius-sm);
+            margin-bottom: 12px;
+        }
+
+        .toggle-label { font-weight: 500; }
+
+        .toggle {
+            width: 52px;
+            height: 28px;
+            background: var(--gray-300);
+            border-radius: 14px;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .toggle.active { background: var(--success); }
+
+        .toggle::after {
+            content: '';
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            background: white;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.2s;
+        }
+
+        .toggle.active::after { transform: translateX(24px); }
+
+        /* Bottom Nav */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 480px;
+            background: white;
+            padding: 12px 20px calc(12px + var(--safe-bottom));
+            display: flex;
+            justify-content: space-around;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
+            z-index: 1000;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            color: var(--gray-500);
+            font-size: 11px;
+            cursor: pointer;
+        }
+
+        .nav-item i { font-size: 22px; }
+        .nav-item.active { color: var(--accent); }
+
+        /* Toast */
+        .toast-container {
+            position: fixed;
+            top: calc(var(--safe-top) + 16px);
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 3000;
+            width: calc(100% - 40px);
+            max-width: 400px;
+        }
+
+        .toast {
+            background: var(--dark);
+            color: white;
+            padding: 16px 20px;
+            border-radius: var(--radius-sm);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .toast.success { background: var(--success); }
+        .toast.error { background: var(--danger); }
+
+        /* Premium Banner */
+        .premium-banner {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin: 20px;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .premium-banner i { font-size: 32px; }
+        .premium-banner h3 { font-size: 16px; font-weight: 700; }
+        .premium-banner p { font-size: 13px; opacity: 0.9; }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .empty-state i {
+            font-size: 48px;
+            color: var(--gray-300);
+            margin-bottom: 16px;
+        }
+
+        .empty-state h3 { color: var(--gray-700); margin-bottom: 8px; }
+        .empty-state p { color: var(--gray-500); font-size: 14px; }
+    </style>
+</head>
+<body>
+    <div class="app" id="app">
+        <div class="toast-container" id="toastContainer"></div>
+
+        <!-- ============ DASHBOARD SCREEN ============ -->
+        <div class="screen active" id="dashboardScreen">
+            <div class="header" style="padding-bottom: 50px;">
+                <div class="header-title">Hallo, Marco!</div>
+                <div class="header-subtitle">Dein Koch-Dashboard</div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card accent">
+                    <div class="stat-value" id="pendingCount">0</div>
+                    <div class="stat-label">Offene Anfragen</div>
+                </div>
+                <div class="stat-card success">
+                    <div class="stat-value" id="bookingsCount">0</div>
+                    <div class="stat-label">Buchungen diesen Monat</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="ratingAvg">0.0</div>
+                    <div class="stat-label">Durchschnittsbewertung</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="ratingCount">0</div>
+                    <div class="stat-label">Gesamte Bewertungen</div>
+                </div>
+            </div>
+
+            <div class="premium-banner">
+                <i class="fas fa-crown"></i>
+                <div>
+                    <h3>Premium Koch werden</h3>
+                    <p>Mehr Sichtbarkeit, mehr Buchungen - nur 29,99€/Monat</p>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">
+                    <i class="fas fa-bell"></i>
+                    Neue Anfragen
+                </div>
+                <div id="pendingBookings">
+                    <div class="empty-state">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Lade Anfragen...</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">
+                    <i class="fas fa-calendar-check"></i>
+                    Kommende Buchungen
+                </div>
+                <div id="upcomingBookings">
+                    <div class="empty-state">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Lade Buchungen...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============ EARNINGS SCREEN ============ -->
+        <div class="screen" id="earningsScreen">
+            <div class="header">
+                <div class="header-title">Verdienst</div>
+                <div class="header-subtitle">Deine Einnahmen im Überblick</div>
+            </div>
+
+            <div class="section">
+                <div class="earnings-chart">
+                    <div class="earnings-amount" id="monthEarnings">€0</div>
+                    <div class="earnings-period">Aktueller Monat</div>
+                    <div class="earnings-chart-bars">
+                        <div>
+                            <div class="chart-bar" style="height: 60px;">
+                                <div class="chart-bar-fill" style="height: 45%;"></div>
+                            </div>
+                            <div class="chart-bar-label">Jul</div>
+                        </div>
+                        <div>
+                            <div class="chart-bar" style="height: 60px;">
+                                <div class="chart-bar-fill" style="height: 60%;"></div>
+                            </div>
+                            <div class="chart-bar-label">Aug</div>
+                        </div>
+                        <div>
+                            <div class="chart-bar" style="height: 60px;">
+                                <div class="chart-bar-fill" style="height: 75%;"></div>
+                            </div>
+                            <div class="chart-bar-label">Sep</div>
+                        </div>
+                        <div>
+                            <div class="chart-bar" style="height: 60px;">
+                                <div class="chart-bar-fill" style="height: 55%;"></div>
+                            </div>
+                            <div class="chart-bar-label">Okt</div>
+                        </div>
+                        <div>
+                            <div class="chart-bar" style="height: 60px;">
+                                <div class="chart-bar-fill" style="height: 85%;"></div>
+                            </div>
+                            <div class="chart-bar-label">Nov</div>
+                        </div>
+                        <div>
+                            <div class="chart-bar" style="height: 60px;">
+                                <div class="chart-bar-fill" style="height: 90%;"></div>
+                            </div>
+                            <div class="chart-bar-label">Dez</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stats-grid" style="padding: 0; margin-top: 0;">
+                    <div class="stat-card success">
+                        <div class="stat-value">€14.230</div>
+                        <div class="stat-label">Gesamt (2025)</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">€237</div>
+                        <div class="stat-label">Pro Buchung (Ø)</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Letzte Auszahlungen</div>
+
+                <div class="booking-item completed">
+                    <div class="booking-header">
+                        <div>
+                            <div class="customer-name">Auszahlung November</div>
+                            <div class="booking-date">01.12.2025</div>
+                        </div>
+                        <div class="booking-amount">€2.156</div>
+                    </div>
+                </div>
+
+                <div class="booking-item completed">
+                    <div class="booking-header">
+                        <div>
+                            <div class="customer-name">Auszahlung Oktober</div>
+                            <div class="booking-date">01.11.2025</div>
+                        </div>
+                        <div class="booking-amount">€1.890</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <button class="btn btn-primary btn-block">
+                    <i class="fas fa-university"></i>
+                    Auszahlung anfordern
+                </button>
+            </div>
+        </div>
+
+        <!-- ============ AVAILABILITY SCREEN ============ -->
+        <div class="screen" id="availabilityScreen">
+            <div class="header">
+                <div class="header-title">Verfügbarkeit</div>
+                <div class="header-subtitle">Wann bist du verfügbar?</div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Wöchentliche Verfügbarkeit</div>
+                <div class="availability-grid">
+                    <div class="day-slot active" onclick="toggleDay(this)">
+                        <div class="day-name">Mo</div>
+                        <div class="day-status">17-22</div>
+                    </div>
+                    <div class="day-slot active" onclick="toggleDay(this)">
+                        <div class="day-name">Di</div>
+                        <div class="day-status">17-22</div>
+                    </div>
+                    <div class="day-slot active" onclick="toggleDay(this)">
+                        <div class="day-name">Mi</div>
+                        <div class="day-status">17-22</div>
+                    </div>
+                    <div class="day-slot" onclick="toggleDay(this)">
+                        <div class="day-name">Do</div>
+                        <div class="day-status">Frei</div>
+                    </div>
+                    <div class="day-slot active" onclick="toggleDay(this)">
+                        <div class="day-name">Fr</div>
+                        <div class="day-status">17-23</div>
+                    </div>
+                    <div class="day-slot active" onclick="toggleDay(this)">
+                        <div class="day-name">Sa</div>
+                        <div class="day-status">11-23</div>
+                    </div>
+                    <div class="day-slot active" onclick="toggleDay(this)">
+                        <div class="day-name">So</div>
+                        <div class="day-status">11-21</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Einstellungen</div>
+
+                <div class="toggle-row">
+                    <div>
+                        <div class="toggle-label">Sofort-Buchung</div>
+                        <div style="font-size: 13px; color: var(--gray-500);">Kunden können direkt buchen</div>
+                    </div>
+                    <div class="toggle active" onclick="toggleSwitch(this)"></div>
+                </div>
+
+                <div class="toggle-row">
+                    <div>
+                        <div class="toggle-label">Neue Anfragen</div>
+                        <div style="font-size: 13px; color: var(--gray-500);">Neue Buchungsanfragen erhalten</div>
+                    </div>
+                    <div class="toggle active" onclick="toggleSwitch(this)"></div>
+                </div>
+
+                <div class="toggle-row">
+                    <div>
+                        <div class="toggle-label">Urlaubs-Modus</div>
+                        <div style="font-size: 13px; color: var(--gray-500);">Vorübergehend nicht verfügbar</div>
+                    </div>
+                    <div class="toggle" onclick="toggleSwitch(this)"></div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="form-group">
+                    <label class="form-label">Maximale Entfernung (km)</label>
+                    <input type="number" class="form-input" value="25" min="5" max="100">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Mindestbuchung (Stunden)</label>
+                    <input type="number" class="form-input" value="2" min="1" max="8">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Max. Gäste</label>
+                    <input type="number" class="form-input" value="12" min="2" max="50">
+                </div>
+
+                <button class="btn btn-primary btn-block">
+                    <i class="fas fa-save"></i>
+                    Speichern
+                </button>
+            </div>
+        </div>
+
+        <!-- ============ PROFILE SCREEN ============ -->
+        <div class="screen" id="profileScreen">
+            <div class="profile-header">
+                <img class="profile-avatar" src="https://images.unsplash.com/photo-1577219491135-ce391730fb2c?w=200" alt="Avatar">
+                <div class="profile-name">Marco Rossi</div>
+                <div class="profile-rating">
+                    <i class="fas fa-star"></i>
+                    <span>4.9 (127 Bewertungen)</span>
+                </div>
+            </div>
+
+            <div class="profile-stats">
+                <div class="profile-stat">
+                    <div class="profile-stat-value">234</div>
+                    <div class="profile-stat-label">Buchungen</div>
+                </div>
+                <div class="profile-stat">
+                    <div class="profile-stat-value">€55</div>
+                    <div class="profile-stat-label">pro Stunde</div>
+                </div>
+                <div class="profile-stat">
+                    <div class="profile-stat-value">2 J.</div>
+                    <div class="profile-stat-label">Dabei seit</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Profil bearbeiten</div>
+
+                <div class="form-group">
+                    <label class="form-label">Bio</label>
+                    <textarea class="form-input" rows="3">Ausgebildet in Italien, bringe ich authentische Pasta und mediterrane Küche direkt in dein Zuhause.</textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Stundensatz (€)</label>
+                    <input type="number" class="form-input" value="55">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Spezialitäten</label>
+                    <input type="text" class="form-input" value="Pasta, Risotto, Tiramisu">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Küchen</label>
+                    <input type="text" class="form-input" value="Italienisch, Mediterran">
+                </div>
+
+                <button class="btn btn-primary btn-block">
+                    <i class="fas fa-save"></i>
+                    Profil speichern
+                </button>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Konto</div>
+
+                <div style="background: var(--gray-100); padding: 16px; border-radius: var(--radius-sm); margin-bottom: 12px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span>Stripe verbunden</span>
+                        <i class="fas fa-check-circle" style="color: var(--success);"></i>
+                    </div>
+                </div>
+
+                <button class="btn btn-secondary btn-block">
+                    <i class="fas fa-cog"></i>
+                    Kontoeinstellungen
+                </button>
+
+                <button class="btn btn-danger btn-block" style="margin-top: 12px;">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Abmelden
+                </button>
+            </div>
+        </div>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <div class="nav-item active" onclick="showScreen('dashboardScreen')">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </div>
+            <div class="nav-item" onclick="showScreen('earningsScreen')">
+                <i class="fas fa-euro-sign"></i>
+                <span>Verdienst</span>
+            </div>
+            <div class="nav-item" onclick="showScreen('availabilityScreen')">
+                <i class="fas fa-calendar-alt"></i>
+                <span>Zeiten</span>
+            </div>
+            <div class="nav-item" onclick="showScreen('profileScreen')">
+                <i class="fas fa-user"></i>
+                <span>Profil</span>
+            </div>
+        </nav>
+    </div>
+
+    <script>
+        const API_URL = '/api';
+        let state = {
+            token: localStorage.getItem('gusto_token'),
+            user: null,
+            profile: null,
+            bookings: []
+        };
+
+        // ==================== INITIALIZATION ====================
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!state.token) {
+                window.location.href = 'index.html';
+                return;
+            }
+            initApp();
+        });
+
+        async function initApp() {
+            try {
+                await loadUser();
+                if (!state.user || state.user.user_type !== 'chef') {
+                    showToast('Nur für Köche zugänglich', 'error');
+                    setTimeout(() => window.location.href = 'index.html', 2000);
+                    return;
+                }
+                await loadChefProfile();
+                await loadBookings();
+                await loadEarnings();
+                updateUI();
+            } catch (error) {
+                console.error('Init error:', error);
+                showToast('Fehler beim Laden', 'error');
+            }
+        }
+
+        // ==================== API CALLS ====================
+        async function apiCall(endpoint, method = 'GET', body = null) {
+            const options = {
+                method,
+                headers: { 'Content-Type': 'application/json' }
+            };
+            if (state.token) {
+                options.headers['Authorization'] = `Bearer ${state.token}`;
+            }
+            if (body) {
+                options.body = JSON.stringify(body);
+            }
+            const response = await fetch(`${API_URL}/${endpoint}`, options);
+            const data = await response.json();
+            if (!response.ok) throw new Error(data.error || 'API Error');
+            return data;
+        }
+
+        async function loadUser() {
+            state.user = await apiCall('auth/me');
+        }
+
+        async function loadChefProfile() {
+            state.profile = await apiCall('chefs/me');
+            document.querySelector('.header-title').textContent = `Hallo, ${state.user.first_name}!`;
+        }
+
+        async function loadBookings() {
+            state.bookings = await apiCall('bookings');
+            renderBookings();
+        }
+
+        async function loadEarnings() {
+            try {
+                const earnings = await apiCall('chefs/me/earnings?period=month');
+                document.getElementById('monthEarnings').textContent = formatPrice(earnings.total || 0);
+            } catch (e) {
+                console.log('Earnings not available');
+            }
+        }
+
+        function updateUI() {
+            const pending = state.bookings.filter(b => b.status === 'pending').length;
+            const confirmed = state.bookings.filter(b => b.status === 'confirmed').length;
+
+            document.getElementById('pendingCount').textContent = pending;
+            document.getElementById('bookingsCount').textContent = state.bookings.filter(b =>
+                b.status === 'confirmed' || b.status === 'completed'
+            ).length;
+            document.getElementById('ratingAvg').textContent = state.profile?.rating_avg || '0.0';
+            document.getElementById('ratingCount').textContent = state.profile?.rating_count || '0';
+        }
+
+        function renderBookings() {
+            const pendingContainer = document.getElementById('pendingBookings');
+            const upcomingContainer = document.getElementById('upcomingBookings');
+
+            const pending = state.bookings.filter(b => b.status === 'pending');
+            const upcoming = state.bookings.filter(b => b.status === 'confirmed');
+
+            if (pending.length === 0) {
+                pendingContainer.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><p>Keine neuen Anfragen</p></div>';
+            } else {
+                pendingContainer.innerHTML = pending.map(b => renderBookingCard(b, 'pending')).join('');
+            }
+
+            if (upcoming.length === 0) {
+                upcomingContainer.innerHTML = '<div class="empty-state"><i class="fas fa-calendar"></i><p>Keine kommenden Buchungen</p></div>';
+            } else {
+                upcomingContainer.innerHTML = upcoming.map(b => renderBookingCard(b, 'confirmed')).join('');
+            }
+        }
+
+        function renderBookingCard(booking, type) {
+            const date = new Date(booking.event_date);
+            const dateStr = date.toLocaleDateString('de-DE', { weekday: 'short', day: 'numeric', month: 'short' });
+
+            return `
+                <div class="booking-item ${type}">
+                    <div class="booking-header">
+                        <div class="booking-customer">
+                            <img class="customer-avatar" src="${booking.customer_avatar || 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + booking.customer_id}" alt="">
+                            <div>
+                                <div class="customer-name">${booking.customer_first_name || 'Kunde'} ${booking.customer_last_name || ''}</div>
+                                <div class="booking-date">${dateStr}, ${booking.event_time} Uhr</div>
+                            </div>
+                        </div>
+                        <div class="booking-amount">${formatPrice(booking.total_amount)}</div>
+                    </div>
+                    <div class="booking-details">
+                        <span><i class="fas fa-clock"></i> ${booking.duration_hours} Stunden</span>
+                        <span><i class="fas fa-users"></i> ${booking.guest_count} Gäste</span>
+                        <span><i class="fas fa-map-marker-alt"></i> ${booking.location_city || 'Berlin'}</span>
+                    </div>
+                    ${type === 'pending' ? `
+                        <div class="booking-actions">
+                            <button class="btn btn-success btn-sm" onclick="acceptBooking(${booking.id})">
+                                <i class="fas fa-check"></i> Annehmen
+                            </button>
+                            <button class="btn btn-secondary btn-sm" onclick="declineBooking(${booking.id})">
+                                <i class="fas fa-times"></i> Ablehnen
+                            </button>
+                        </div>
+                    ` : `
+                        <div style="background: var(--gray-100); padding: 12px; border-radius: var(--radius-sm); margin-top: 12px;">
+                            <div style="font-size: 13px; color: var(--gray-600);">
+                                <strong>Adresse:</strong> ${booking.location_address || 'Nicht angegeben'}
+                            </div>
+                            ${booking.special_requests ? `
+                                <div style="font-size: 13px; color: var(--gray-600); margin-top: 4px;">
+                                    <strong>Notizen:</strong> ${booking.special_requests}
+                                </div>
+                            ` : ''}
+                        </div>
+                    `}
+                </div>
+            `;
+        }
+
+        // ==================== ACTIONS ====================
+        async function acceptBooking(id) {
+            try {
+                await apiCall(`bookings/${id}/status`, 'PUT', { status: 'confirmed' });
+                showToast('Buchung angenommen!', 'success');
+                await loadBookings();
+                updateUI();
+            } catch (error) {
+                showToast(error.message || 'Fehler', 'error');
+            }
+        }
+
+        async function declineBooking(id) {
+            try {
+                await apiCall(`bookings/${id}/status`, 'PUT', { status: 'cancelled' });
+                showToast('Buchung abgelehnt', 'info');
+                await loadBookings();
+                updateUI();
+            } catch (error) {
+                showToast(error.message || 'Fehler', 'error');
+            }
+        }
+
+        function startBooking(id) {
+            showToast('Buchung gestartet - Viel Erfolg!', 'success');
+        }
+
+        function logout() {
+            localStorage.removeItem('gusto_token');
+            window.location.href = 'index.html';
+        }
+
+        // ==================== UI HELPERS ====================
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            const navMap = {
+                'dashboardScreen': 0,
+                'earningsScreen': 1,
+                'availabilityScreen': 2,
+                'profileScreen': 3
+            };
+            if (navMap[screenId] !== undefined) {
+                document.querySelectorAll('.nav-item')[navMap[screenId]].classList.add('active');
+            }
+        }
+
+        function toggleDay(el) {
+            el.classList.toggle('active');
+            if (el.classList.contains('active')) {
+                el.querySelector('.day-status').textContent = '17-22';
+            } else {
+                el.querySelector('.day-status').textContent = 'Frei';
+            }
+        }
+
+        function toggleSwitch(el) {
+            el.classList.toggle('active');
+        }
+
+        function formatPrice(cents) {
+            return '€' + (cents / 100).toFixed(0);
+        }
+
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'times-circle' : 'info-circle'}"></i>
+                <span>${message}</span>
+            `;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,49 @@
+# Gusto Chef API - Apache Configuration
+
+# Enable rewrite engine
+RewriteEngine On
+
+# Set base directory
+RewriteBase /api/
+
+# Handle CORS preflight requests
+RewriteCond %{REQUEST_METHOD} OPTIONS
+RewriteRule ^(.*)$ $1 [R=200,L]
+
+# Route all requests to index.php except existing files/directories
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php [QSA,L]
+
+# Security headers
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Frame-Options "DENY"
+    Header always set X-XSS-Protection "1; mode=block"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+
+    # CORS Headers
+    Header always set Access-Control-Allow-Origin "*"
+    Header always set Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
+    Header always set Access-Control-Allow-Headers "Content-Type, Authorization, X-Requested-With"
+    Header always set Access-Control-Max-Age "86400"
+</IfModule>
+
+# Prevent access to sensitive files
+<FilesMatch "\.(db|sqlite|sql|log|ini|conf)$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+# Prevent directory listing
+Options -Indexes
+
+# PHP Settings
+<IfModule mod_php.c>
+    php_flag display_errors Off
+    php_value error_reporting E_ALL
+    php_value max_execution_time 30
+    php_value memory_limit 128M
+    php_value post_max_size 10M
+    php_value upload_max_filesize 10M
+</IfModule>
