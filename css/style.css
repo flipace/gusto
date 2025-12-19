@@ -912,6 +912,201 @@ textarea {
     color: var(--success);
 }
 
+/* Drink Finder Quiz */
+.finder-card {
+    text-align: center;
+    background: linear-gradient(135deg, var(--bg-card) 0%, #1e3a5f 100%);
+    border-left: 3px solid var(--vodka);
+}
+
+.finder-card h2 {
+    color: var(--vodka);
+    margin-bottom: 8px;
+}
+
+.finder-subtitle {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    margin: 0;
+}
+
+.quiz-question {
+    display: none;
+}
+
+.quiz-question.active {
+    display: block;
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.quiz-question h3 {
+    text-align: center;
+    margin-bottom: 16px;
+    font-size: 1.125rem;
+}
+
+.quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.quiz-option {
+    padding: 14px 16px;
+    background: var(--bg-secondary);
+    border: 2px solid transparent;
+    border-radius: 10px;
+    color: var(--text-primary);
+    font-size: 1rem;
+    cursor: pointer;
+    transition: var(--transition);
+    text-align: left;
+}
+
+.quiz-option:hover {
+    border-color: var(--vodka);
+    background: var(--bg-primary);
+    transform: translateX(4px);
+}
+
+.quiz-option:active {
+    transform: scale(0.98);
+}
+
+.quiz-option.selected {
+    border-color: var(--vodka);
+    background: rgba(56, 189, 248, 0.1);
+}
+
+/* Quiz Progress */
+.quiz-progress {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.progress-bar {
+    height: 6px;
+    background: var(--bg-secondary);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 8px;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--vodka), var(--citrus));
+    border-radius: 3px;
+    transition: width 0.3s ease;
+    width: 25%;
+}
+
+.progress-text {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+/* Quiz Result */
+#quiz-result.hidden {
+    display: none;
+}
+
+.result-card {
+    text-align: center;
+    background: linear-gradient(135deg, var(--bg-card) 0%, #2d1f3d 100%);
+    border: 2px solid var(--vodka);
+}
+
+.result-emoji {
+    font-size: 4rem;
+    margin-bottom: 12px;
+    animation: bounce 0.6s ease;
+}
+
+@keyframes bounce {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+}
+
+.result-card h2 {
+    color: var(--vodka);
+    margin-bottom: 8px;
+}
+
+.result-tagline {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    font-style: italic;
+}
+
+.result-ingredients {
+    list-style: none;
+    padding: 0;
+}
+
+.result-ingredients li {
+    padding: 8px 0;
+    border-bottom: 1px solid var(--bg-secondary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.result-ingredients li:last-child {
+    border-bottom: none;
+}
+
+.result-ingredients li::before {
+    content: "•";
+    color: var(--vodka);
+}
+
+.result-instructions {
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+.result-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    margin: 16px 0;
+}
+
+.result-tag {
+    padding: 6px 12px;
+    background: var(--bg-card);
+    border-radius: 20px;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+.result-tag.mood {
+    background: rgba(168, 85, 247, 0.2);
+    color: #a855f7;
+}
+
+.result-tag.taste {
+    background: rgba(56, 189, 248, 0.2);
+    color: var(--vodka);
+}
+
+.result-tag.occasion {
+    background: rgba(251, 191, 36, 0.2);
+    color: var(--citrus);
+}
+
 /* Responsive adjustments */
 @media (min-width: 480px) {
     .app-container {

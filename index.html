@@ -18,7 +18,8 @@
         <!-- Navigation Tabs -->
         <nav class="tabs">
             <button class="tab active" data-tab="log">Log</button>
-            <button class="tab" data-tab="recipes">Recipes</button>
+            <button class="tab" data-tab="finder">Finder</button>
+            <button class="tab" data-tab="recipes">Tipps</button>
             <button class="tab" data-tab="history">History</button>
             <button class="tab" data-tab="stats">Stats</button>
         </nav>
@@ -138,6 +139,104 @@
                 </div>
 
                 <button class="save-btn" id="save-entry">Save Entry</button>
+            </section>
+
+            <!-- Drink Finder Tab -->
+            <section id="finder" class="tab-content">
+                <div class="card finder-card">
+                    <h2>Was trinkst du heute?</h2>
+                    <p class="finder-subtitle">Beantworte ein paar Fragen und finde deinen perfekten Drink!</p>
+                </div>
+
+                <!-- Quiz Container -->
+                <div id="quiz-container">
+                    <!-- Question 1: Mood -->
+                    <div class="quiz-question active" data-question="1">
+                        <div class="card">
+                            <h3>Wie fühlst du dich gerade?</h3>
+                            <div class="quiz-options">
+                                <button class="quiz-option" data-value="chill">😌 Entspannt</button>
+                                <button class="quiz-option" data-value="happy">🥳 Feierlaune</button>
+                                <button class="quiz-option" data-value="tired">😴 Müde</button>
+                                <button class="quiz-option" data-value="stressed">😤 Gestresst</button>
+                                <button class="quiz-option" data-value="romantic">🥰 Romantisch</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Question 2: Occasion -->
+                    <div class="quiz-question" data-question="2">
+                        <div class="card">
+                            <h3>Was ist der Anlass?</h3>
+                            <div class="quiz-options">
+                                <button class="quiz-option" data-value="solo">🧘 Solo Chill</button>
+                                <button class="quiz-option" data-value="friends">👯 Mit Freunden</button>
+                                <button class="quiz-option" data-value="date">💕 Date Night</button>
+                                <button class="quiz-option" data-value="party">🎉 Party</button>
+                                <button class="quiz-option" data-value="dinner">🍽️ Zum Essen</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Question 3: Taste -->
+                    <div class="quiz-question" data-question="3">
+                        <div class="card">
+                            <h3>Worauf hast du Lust?</h3>
+                            <div class="quiz-options">
+                                <button class="quiz-option" data-value="fresh">🧊 Frisch & Leicht</button>
+                                <button class="quiz-option" data-value="sweet">🍬 Süß</button>
+                                <button class="quiz-option" data-value="sour">🍋 Sauer / Zitrus</button>
+                                <button class="quiz-option" data-value="strong">💪 Stark & Pur</button>
+                                <button class="quiz-option" data-value="spicy">🌶️ Würzig</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Question 4: Effort -->
+                    <div class="quiz-question" data-question="4">
+                        <div class="card">
+                            <h3>Wie viel Aufwand?</h3>
+                            <div class="quiz-options">
+                                <button class="quiz-option" data-value="easy">⚡ Schnell & Einfach</button>
+                                <button class="quiz-option" data-value="medium">🍸 Bisschen Aufwand ok</button>
+                                <button class="quiz-option" data-value="fancy">✨ Ich will was Besonderes</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Progress Bar -->
+                <div class="quiz-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="quiz-progress-fill"></div>
+                    </div>
+                    <span class="progress-text" id="quiz-progress-text">Frage 1 von 4</span>
+                </div>
+
+                <!-- Result Container (hidden initially) -->
+                <div id="quiz-result" class="hidden">
+                    <div class="card result-card">
+                        <div class="result-emoji" id="result-emoji">🍸</div>
+                        <h2 id="result-name">Dein perfekter Drink</h2>
+                        <p class="result-tagline" id="result-tagline">Perfekt für deine Stimmung!</p>
+                    </div>
+
+                    <div class="card">
+                        <h3>Zutaten</h3>
+                        <ul class="result-ingredients" id="result-ingredients">
+                        </ul>
+                    </div>
+
+                    <div class="card">
+                        <h3>Zubereitung</h3>
+                        <p class="result-instructions" id="result-instructions"></p>
+                    </div>
+
+                    <div class="result-tags" id="result-tags">
+                    </div>
+
+                    <button class="save-btn" id="restart-quiz">Nochmal!</button>
+                </div>
             </section>
 
             <!-- Recipes & Tips Tab -->

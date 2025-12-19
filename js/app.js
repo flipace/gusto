@@ -174,6 +174,135 @@ const dailyMotivations = {
     ]
 };
 
+// Quiz drinks database with tags for matching
+const quizDrinks = [
+    {
+        name: 'Moscow Mule',
+        emoji: '🥃',
+        tagline: 'Erfrischend und würzig - ein Klassiker!',
+        ingredients: ['50ml Vodka', '120ml Ginger Beer', '15ml Limettensaft', 'Limettenscheibe', 'Eis'],
+        instructions: 'Glas mit Eis füllen. Vodka und Limettensaft dazu. Mit Ginger Beer auffüllen und umrühren. Mit Limette garnieren.',
+        tags: { mood: ['chill', 'happy'], occasion: ['friends', 'party'], taste: ['fresh', 'spicy'], effort: ['easy'] }
+    },
+    {
+        name: 'Vodka Martini',
+        emoji: '🍸',
+        tagline: 'Elegant und pur - für besondere Momente',
+        ingredients: ['60ml Vodka', '10ml Dry Vermouth', 'Olive oder Zitronenzeste'],
+        instructions: 'Vodka und Vermouth mit Eis rühren (nicht schütteln!). In gekühltes Martiniglas abseihen. Mit Olive garnieren.',
+        tags: { mood: ['romantic', 'chill'], occasion: ['date', 'solo'], taste: ['strong'], effort: ['medium', 'fancy'] }
+    },
+    {
+        name: 'Vodka Soda',
+        emoji: '🥤',
+        tagline: 'Clean und simpel - der Allrounder',
+        ingredients: ['50ml Vodka', 'Soda Wasser', 'Limettenscheibe', 'Eis'],
+        instructions: 'Glas mit Eis füllen. Vodka dazu und mit Soda auffüllen. Limette reindrücken.',
+        tags: { mood: ['chill', 'tired'], occasion: ['solo', 'dinner'], taste: ['fresh'], effort: ['easy'] }
+    },
+    {
+        name: 'Cosmopolitan',
+        emoji: '🍹',
+        tagline: 'Pink, süß und fancy - ein Hingucker!',
+        ingredients: ['40ml Vodka Citron', '20ml Cointreau', '20ml Cranberrysaft', '10ml Limettensaft'],
+        instructions: 'Alle Zutaten mit Eis shaken. In gekühltes Cocktailglas abseihen. Mit Orangenzeste garnieren.',
+        tags: { mood: ['happy', 'romantic'], occasion: ['date', 'party', 'friends'], taste: ['sweet', 'sour'], effort: ['medium', 'fancy'] }
+    },
+    {
+        name: 'Lemon Drop',
+        emoji: '🍋',
+        tagline: 'Süß-sauer und erfrischend!',
+        ingredients: ['50ml Vodka', '25ml frischer Zitronensaft', '20ml Zuckersirup', 'Zuckerrand'],
+        instructions: 'Glasrand mit Zucker. Alles mit Eis shaken. In Glas abseihen.',
+        tags: { mood: ['happy', 'stressed'], occasion: ['friends', 'party'], taste: ['sweet', 'sour'], effort: ['medium'] }
+    },
+    {
+        name: 'Bloody Mary',
+        emoji: '🍅',
+        tagline: 'Der Brunch-Klassiker mit Kick!',
+        ingredients: ['50ml Vodka', '100ml Tomatensaft', 'Worcestershire', 'Tabasco', 'Sellerie, Zitrone'],
+        instructions: 'Alles in Glas mit Eis mischen. Gut würzen nach Geschmack. Mit Sellerie und Zitrone garnieren.',
+        tags: { mood: ['tired', 'stressed'], occasion: ['dinner', 'solo'], taste: ['spicy'], effort: ['medium'] }
+    },
+    {
+        name: 'White Russian',
+        emoji: '🥛',
+        tagline: 'Cremig und süß - Dessert im Glas',
+        ingredients: ['50ml Vodka', '25ml Kahlúa', '25ml Sahne'],
+        instructions: 'Vodka und Kahlúa in Glas mit Eis. Sahne vorsichtig drüber gießen.',
+        tags: { mood: ['chill', 'romantic'], occasion: ['date', 'solo'], taste: ['sweet'], effort: ['easy'] }
+    },
+    {
+        name: 'Espresso Martini',
+        emoji: '☕',
+        tagline: 'Wach und beschwipst - beste Kombi!',
+        ingredients: ['50ml Vodka', '30ml Kahlúa', '30ml frischer Espresso', '10ml Zuckersirup'],
+        instructions: 'Alles mit Eis kräftig shaken bis schaumig. In Martiniglas abseihen. Mit Kaffeebohnen garnieren.',
+        tags: { mood: ['tired', 'happy'], occasion: ['party', 'date', 'friends'], taste: ['sweet', 'strong'], effort: ['medium', 'fancy'] }
+    },
+    {
+        name: 'Screwdriver',
+        emoji: '🍊',
+        tagline: 'Simple und fruchtig - Vitamin Vodka!',
+        ingredients: ['50ml Vodka', '100ml frischer Orangensaft', 'Orangenscheibe'],
+        instructions: 'Vodka in Glas mit Eis. Mit O-Saft auffüllen. Umrühren. Fertig.',
+        tags: { mood: ['chill', 'happy'], occasion: ['solo', 'friends'], taste: ['sweet', 'fresh'], effort: ['easy'] }
+    },
+    {
+        name: 'Vodka on the Rocks',
+        emoji: '🧊',
+        tagline: 'Pur und ehrlich - für Puristen',
+        ingredients: ['50ml Premium Vodka', 'Große Eiswürfel'],
+        instructions: 'Guten Vodka in Glas mit einem großen Eiswürfel. Genießen.',
+        tags: { mood: ['chill', 'stressed'], occasion: ['solo'], taste: ['strong'], effort: ['easy'] }
+    },
+    {
+        name: 'Sex on the Beach',
+        emoji: '🏖️',
+        tagline: 'Fruchtig, süß und Urlaubsfeeling!',
+        ingredients: ['40ml Vodka', '20ml Pfirsichlikör', '40ml Orangensaft', '40ml Cranberrysaft'],
+        instructions: 'Alles in Glas mit Eis geben. Umrühren. Mit Orange garnieren.',
+        tags: { mood: ['happy', 'romantic'], occasion: ['party', 'friends', 'date'], taste: ['sweet', 'fresh'], effort: ['easy'] }
+    },
+    {
+        name: 'Vodka Gimlet',
+        emoji: '💚',
+        tagline: 'Sauer macht lustig!',
+        ingredients: ['60ml Vodka', '20ml Limettensaft', '15ml Zuckersirup'],
+        instructions: 'Mit Eis shaken. In gekühltes Glas abseihen. Mit Limettenscheibe.',
+        tags: { mood: ['chill', 'stressed'], occasion: ['solo', 'date'], taste: ['sour'], effort: ['medium'] }
+    },
+    {
+        name: 'Caipiroska',
+        emoji: '🇧🇷',
+        tagline: 'Brasilianisches Feeling mit Vodka!',
+        ingredients: ['50ml Vodka', '1 Limette', '2 TL Rohrzucker', 'Crushed Ice'],
+        instructions: 'Limette vierteln und mit Zucker muddlen. Vodka und Crushed Ice dazu. Umrühren.',
+        tags: { mood: ['happy', 'romantic'], occasion: ['party', 'friends', 'date'], taste: ['sour', 'sweet'], effort: ['medium'] }
+    },
+    {
+        name: 'Cucumber Cooler',
+        emoji: '🥒',
+        tagline: 'Spa im Glas - ultra erfrischend!',
+        ingredients: ['50ml Vodka', '4 Gurkenscheiben', 'Minze', 'Soda', 'Limette'],
+        instructions: 'Gurke und Minze muddlen. Vodka und Limette dazu. Mit Soda und Eis auffüllen.',
+        tags: { mood: ['chill', 'stressed'], occasion: ['solo', 'date'], taste: ['fresh'], effort: ['medium', 'fancy'] }
+    },
+    {
+        name: 'Black Russian',
+        emoji: '🖤',
+        tagline: 'Dunkel und kräftig',
+        ingredients: ['50ml Vodka', '25ml Kahlúa', 'Eis'],
+        instructions: 'Vodka und Kahlúa in Glas mit Eis. Kurz umrühren.',
+        tags: { mood: ['chill', 'tired'], occasion: ['solo', 'dinner'], taste: ['sweet', 'strong'], effort: ['easy'] }
+    }
+];
+
+// Quiz state
+let quizAnswers = {};
+let currentQuestion = 1;
+const totalQuestions = 4;
+
 // Initialize app
 document.addEventListener('DOMContentLoaded', () => {
     loadData();
@@ -188,6 +317,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeHistory();
     initializeStats();
     initializeRecipes();
+    initializeQuiz();
     loadTodayEntry();
 });
 
@@ -858,4 +988,167 @@ function refreshMotivation() {
             motivationEl.style.opacity = '1';
         }, 200);
     }
+}
+
+// Initialize quiz
+function initializeQuiz() {
+    const quizContainer = document.getElementById('quiz-container');
+    if (!quizContainer) return;
+
+    // Add click handlers to all quiz options
+    quizContainer.querySelectorAll('.quiz-option').forEach(option => {
+        option.addEventListener('click', () => handleQuizAnswer(option));
+    });
+
+    // Restart button
+    const restartBtn = document.getElementById('restart-quiz');
+    if (restartBtn) {
+        restartBtn.addEventListener('click', resetQuiz);
+    }
+
+    // Reset quiz on tab switch
+    updateQuizProgress();
+}
+
+// Handle quiz answer
+function handleQuizAnswer(option) {
+    const question = option.closest('.quiz-question');
+    const questionNum = parseInt(question.dataset.question);
+    const value = option.dataset.value;
+
+    // Store answer
+    const categories = ['mood', 'occasion', 'taste', 'effort'];
+    quizAnswers[categories[questionNum - 1]] = value;
+
+    // Visual feedback
+    question.querySelectorAll('.quiz-option').forEach(opt => opt.classList.remove('selected'));
+    option.classList.add('selected');
+
+    // Move to next question or show result
+    setTimeout(() => {
+        if (questionNum < totalQuestions) {
+            currentQuestion = questionNum + 1;
+            showQuestion(currentQuestion);
+            updateQuizProgress();
+        } else {
+            showQuizResult();
+        }
+    }, 300);
+}
+
+// Show specific question
+function showQuestion(num) {
+    document.querySelectorAll('.quiz-question').forEach(q => {
+        q.classList.remove('active');
+    });
+    const question = document.querySelector(`.quiz-question[data-question="${num}"]`);
+    if (question) {
+        question.classList.add('active');
+    }
+}
+
+// Update progress bar
+function updateQuizProgress() {
+    const progressFill = document.getElementById('quiz-progress-fill');
+    const progressText = document.getElementById('quiz-progress-text');
+
+    if (progressFill) {
+        progressFill.style.width = `${(currentQuestion / totalQuestions) * 100}%`;
+    }
+    if (progressText) {
+        progressText.textContent = `Frage ${currentQuestion} von ${totalQuestions}`;
+    }
+}
+
+// Find best matching drink
+function findBestDrink() {
+    let bestDrink = null;
+    let bestScore = -1;
+
+    quizDrinks.forEach(drink => {
+        let score = 0;
+
+        // Check mood match
+        if (drink.tags.mood.includes(quizAnswers.mood)) score += 3;
+
+        // Check occasion match
+        if (drink.tags.occasion.includes(quizAnswers.occasion)) score += 2;
+
+        // Check taste match
+        if (drink.tags.taste.includes(quizAnswers.taste)) score += 3;
+
+        // Check effort match
+        if (drink.tags.effort.includes(quizAnswers.effort)) score += 2;
+
+        // Add some randomness for variety
+        score += Math.random() * 0.5;
+
+        if (score > bestScore) {
+            bestScore = score;
+            bestDrink = drink;
+        }
+    });
+
+    return bestDrink;
+}
+
+// Show quiz result
+function showQuizResult() {
+    const quizContainer = document.getElementById('quiz-container');
+    const quizProgress = document.querySelector('.quiz-progress');
+    const resultContainer = document.getElementById('quiz-result');
+
+    // Hide quiz, show result
+    if (quizContainer) quizContainer.style.display = 'none';
+    if (quizProgress) quizProgress.style.display = 'none';
+    if (resultContainer) resultContainer.classList.remove('hidden');
+
+    // Find and display the drink
+    const drink = findBestDrink();
+
+    document.getElementById('result-emoji').textContent = drink.emoji;
+    document.getElementById('result-name').textContent = drink.name;
+    document.getElementById('result-tagline').textContent = drink.tagline;
+
+    // Ingredients
+    const ingredientsList = document.getElementById('result-ingredients');
+    ingredientsList.innerHTML = drink.ingredients.map(ing => `<li>${ing}</li>`).join('');
+
+    // Instructions
+    document.getElementById('result-instructions').textContent = drink.instructions;
+
+    // Tags
+    const moodLabels = { chill: '😌 Entspannt', happy: '🥳 Feierlaune', tired: '😴 Müde', stressed: '😤 Gestresst', romantic: '🥰 Romantisch' };
+    const occasionLabels = { solo: '🧘 Solo', friends: '👯 Freunde', date: '💕 Date', party: '🎉 Party', dinner: '🍽️ Dinner' };
+    const tasteLabels = { fresh: '🧊 Frisch', sweet: '🍬 Süß', sour: '🍋 Sauer', strong: '💪 Stark', spicy: '🌶️ Würzig' };
+
+    const tagsContainer = document.getElementById('result-tags');
+    tagsContainer.innerHTML = `
+        <span class="result-tag mood">${moodLabels[quizAnswers.mood]}</span>
+        <span class="result-tag occasion">${occasionLabels[quizAnswers.occasion]}</span>
+        <span class="result-tag taste">${tasteLabels[quizAnswers.taste]}</span>
+    `;
+}
+
+// Reset quiz
+function resetQuiz() {
+    quizAnswers = {};
+    currentQuestion = 1;
+
+    // Show quiz, hide result
+    const quizContainer = document.getElementById('quiz-container');
+    const quizProgress = document.querySelector('.quiz-progress');
+    const resultContainer = document.getElementById('quiz-result');
+
+    if (quizContainer) quizContainer.style.display = 'block';
+    if (quizProgress) quizProgress.style.display = 'block';
+    if (resultContainer) resultContainer.classList.add('hidden');
+
+    // Reset all questions
+    document.querySelectorAll('.quiz-question').forEach((q, index) => {
+        q.classList.toggle('active', index === 0);
+        q.querySelectorAll('.quiz-option').forEach(opt => opt.classList.remove('selected'));
+    });
+
+    updateQuizProgress();
 }
